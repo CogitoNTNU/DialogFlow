@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory
  */
 class MyActionsApp : DialogflowApp() {
 
-    @ForIntent("Bestill pizza")
+    @ForIntent("Bestill pizza intent")
     fun bestill(request: ActionRequest): ActionResponse {
         LOGGER.info("Bestill pizza start")
         val responseBuilder = getResponseBuilder(request)
