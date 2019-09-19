@@ -1,1 +1,4 @@
 # DialogFlow
+
+# Intents
+- Bestill pizza
