@@ -7,10 +7,11 @@ before_install:
   -d
 
 install:
-  - echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-  - curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-  - apt update
-  - apt install google-cloud-sdk google-cloud-sdk-app-engine-java
+  # If the SDK is not already cached, download it and unpack it
+  - if [ ! -d ${HOME}/google-cloud-sdk ]; then
+    curl https://sdk.cloud.google.com | bash;
+    fi
+  - gcloud components install app-engine-java
 
 script:
   - ./gradlew build test assemble appengineStage
@@ -30,3 +31,4 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/google-cloud-sdk/
