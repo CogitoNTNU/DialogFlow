@@ -3,6 +3,9 @@ before_install:
   -in Dialogflow-prosjektet-80303a8d5040.json.enc -out ../Dialogflow-prosjektet-80303a8d5040.json
   -d
 
+install:
+  - gcloud components install app-engine-java
+
 script:
   - ./gradlew build test assemble appengineStage
 
