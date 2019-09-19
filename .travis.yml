@@ -17,17 +17,10 @@ install:
     fi
   - export PATH=$HOME/google-cloud-sdk/bin:$PATH
   - gcloud components install app-engine-java
+  - gcloud auth activate-service-account --key-file=Dialogflow-prosjektet-80303a8d5040.json
 
 script:
-  - ./gradlew build test assemble appengineStage
-
-deploy:
-  provider: gae
-  keyfile: "Dialogflow-prosjektet-80303a8d5040.json"
-  project: "dialogflow-cogito"
-  default: true
-  config: "build/staged-app"
-  only: master
+  - ./gradlew build test assemble appengineDeploy
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
