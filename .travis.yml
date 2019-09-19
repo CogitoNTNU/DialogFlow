@@ -8,9 +8,11 @@ before_install:
 
 install:
   # If the SDK is not already cached, download it and unpack it
+  - rm -R $HOME/google-cloud-sdk
   - if [ ! -d ${HOME}/google-cloud-sdk ]; then
     curl https://sdk.cloud.google.com | bash;
     fi
+  - export PATH=$HOME/google-cloud-sdk/bin:$PATH
   - gcloud components install app-engine-java
 
 script:
