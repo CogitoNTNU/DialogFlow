@@ -6,6 +6,10 @@ before_install:
   -in Dialogflow-prosjektet-80303a8d5040.json.enc -out ../Dialogflow-prosjektet-80303a8d5040.json
   -d
 
+env:
+  - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+  - PATH=$HOME/google-cloud-sdk/bin:$PATH
+
 install:
   # If the SDK is not already cached, download it and unpack it
   - rm -R $HOME/google-cloud-sdk
