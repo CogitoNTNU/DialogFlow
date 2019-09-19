@@ -3,12 +3,11 @@ language: java
 
 before_install:
 - openssl aes-256-cbc -K $encrypted_5b9474172531_key -iv $encrypted_5b9474172531_iv
-  -in Dialogflow-prosjektet-80303a8d5040.json.enc -out ../Dialogflow-prosjektet-80303a8d5040.json
+  -in Dialogflow-prosjektet-80303a8d5040.json.enc -out Dialogflow-prosjektet-80303a8d5040.json
   -d
 
 env:
   - CLOUDSDK_CORE_DISABLE_PROMPTS=1
-  - PATH=$HOME/google-cloud-sdk/bin:$PATH
 
 install:
   # If the SDK is not already cached, download it and unpack it
@@ -24,7 +23,7 @@ script:
 
 deploy:
   provider: gae
-  keyfile: "Dialogflow-prosjektet-80303a8d5040.json.enc"
+  keyfile: "Dialogflow-prosjektet-80303a8d5040.json"
   project: "dialogflow-cogito"
   default: true
   config: "build/staged-app"
