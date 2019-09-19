@@ -1,5 +1,6 @@
 # DialogFlow
 Cogito prosjekt med DialogFlow.
+
 # Intents
 - Bestill pizza.
 - Bestill sideretter.
@@ -7,3 +8,7 @@ Cogito prosjekt med DialogFlow.
 - Leveringsmåte.
 - Endre bestilling.
 - Slett bestilling.
+
+# Ressurser
+- Google Cloud
+- DialogFlow
