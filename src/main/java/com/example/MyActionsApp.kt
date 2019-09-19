@@ -40,11 +40,7 @@ class MyActionsApp : DialogflowApp() {
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
 
-        if (user != null && user.lastSeen != null) {
-            responseBuilder.add(rb.getString("welcome_back"))
-        } else {
-            responseBuilder.add(rb.getString("welcome"))
-        }
+        responseBuilder.add("Pizza er godt!")
 
         LOGGER.info("Bestill pizza slutt")
         return responseBuilder.build()
