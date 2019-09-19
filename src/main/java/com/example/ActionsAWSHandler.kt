@@ -67,7 +67,6 @@ class ActionsAWSHandler : RequestStreamHandler {
         } catch (e: ParseException) {
             e.printStackTrace()
         }
-
     }
 
     private fun writeResponse(outputStream: OutputStream, responseJson: JSONObject) {
