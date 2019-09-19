@@ -1,4 +1,9 @@
 # DialogFlow
-
+Cogito prosjekt med DialogFlow.
 # Intents
-- Bestill pizza
+- Bestill pizza.
+- Bestill sideretter.
+- Bestill drikke.
+- Leveringsmåte.
+- Endre bestilling.
+- Slett bestilling.
