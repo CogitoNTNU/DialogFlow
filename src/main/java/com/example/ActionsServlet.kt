@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory
  * handling in Google App
  * Engine](https://cloud.google.com/appengine/docs/standard/java/how-requests-are-handled).
  */
-@WebServlet(name = "actions", value = "/")
+@WebServlet(name = "actions", value = ["/"])
 class ActionsServlet : HttpServlet() {
     private val actionsApp = MyActionsApp()
 
     @Throws(IOException::class)
     override fun doPost(req: HttpServletRequest, res: HttpServletResponse) {
-        val body = req.reader.lines().collect<String, *>(Collectors.joining())
+        val body = req.reader.lines().collect(Collectors.joining())
         LOG.info("doPost, body = {}", body)
 
         try {
@@ -86,7 +86,7 @@ class ActionsServlet : HttpServlet() {
     }
 
     private fun getHeadersMap(request: HttpServletRequest): Map<String, String> {
-        val map = HashMap()
+        val map = mutableMapOf<String, String>()
 
         val headerNames = request.headerNames
         while (headerNames.hasMoreElements()) {
