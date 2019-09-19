@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package com.example;
+package com.example
 
-import com.google.actions.api.App;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.actions.api.App
+import java.io.IOException
+import java.util.Enumeration
+import java.util.HashMap
+import java.util.concurrent.ExecutionException
+import java.util.stream.Collectors
+import javax.servlet.annotation.WebServlet
+import javax.servlet.http.HttpServlet
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Handles request received via HTTP POST and delegates it to your Actions app. See: [Request
@@ -36,65 +35,70 @@ import org.slf4j.LoggerFactory;
  * Engine](https://cloud.google.com/appengine/docs/standard/java/how-requests-are-handled).
  */
 @WebServlet(name = "actions", value = "/")
-public class ActionsServlet extends HttpServlet {
-  private static final Logger LOG = LoggerFactory.getLogger(ActionsServlet.class);
-  private final App actionsApp = new MyActionsApp();
+class ActionsServlet : HttpServlet() {
+    private val actionsApp = MyActionsApp()
 
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-    String body = req.getReader().lines().collect(Collectors.joining());
-    LOG.info("doPost, body = {}", body);
+    @Throws(IOException::class)
+    override fun doPost(req: HttpServletRequest, res: HttpServletResponse) {
+        val body = req.reader.lines().collect<String, *>(Collectors.joining())
+        LOG.info("doPost, body = {}", body)
 
-    try {
-      String jsonResponse = actionsApp.handleRequest(body, getHeadersMap(req)).get();
-      LOG.info("Generated json = {}", jsonResponse);
-      res.setContentType("application/json");
-      writeResponse(res, jsonResponse);
-    } catch (InterruptedException e) {
-      handleError(res, e);
-    } catch (ExecutionException e) {
-      handleError(res, e);
+        try {
+            val jsonResponse = actionsApp.handleRequest(body, getHeadersMap(req)).get()
+            LOG.info("Generated json = {}", jsonResponse)
+            res.contentType = "application/json"
+            writeResponse(res, jsonResponse)
+        } catch (e: InterruptedException) {
+            handleError(res, e)
+        } catch (e: ExecutionException) {
+            handleError(res, e)
+        }
+
     }
-  }
 
-  @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
-    response.setContentType("text/plain");
-    response
-        .getWriter()
-        .println(
-            "ActionsServlet is listening but requires valid POST request to respond with Action response.");
-  }
-
-  private void writeResponse(HttpServletResponse res, String asJson) {
-    try {
-      res.getWriter().write(asJson);
-    } catch (IOException e) {
-      e.printStackTrace();
+    @Throws(IOException::class)
+    override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
+        response.contentType = "text/plain"
+        response
+                .writer
+                .println(
+                        "ActionsServlet is listening but requires valid POST request to respond with Action response.")
     }
-  }
 
-  private void handleError(HttpServletResponse res, Throwable throwable) {
-    try {
-      throwable.printStackTrace();
-      LOG.error("Error in App.handleRequest ", throwable);
-      res.getWriter().write("Error handling the intent - " + throwable.getMessage());
-    } catch (IOException e) {
-      e.printStackTrace();
+    private fun writeResponse(res: HttpServletResponse, asJson: String) {
+        try {
+            res.writer.write(asJson)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
     }
-  }
 
-  private Map<String, String> getHeadersMap(HttpServletRequest request) {
-    Map<String, String> map = new HashMap();
+    private fun handleError(res: HttpServletResponse, throwable: Throwable) {
+        try {
+            throwable.printStackTrace()
+            LOG.error("Error in App.handleRequest ", throwable)
+            res.writer.write("Error handling the intent - " + throwable.message)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
 
-    Enumeration headerNames = request.getHeaderNames();
-    while (headerNames.hasMoreElements()) {
-      String key = (String) headerNames.nextElement();
-      String value = request.getHeader(key);
-      map.put(key, value);
     }
-    return map;
-  }
+
+    private fun getHeadersMap(request: HttpServletRequest): Map<String, String> {
+        val map = HashMap()
+
+        val headerNames = request.headerNames
+        while (headerNames.hasMoreElements()) {
+            val key = headerNames.nextElement() as String
+            val value = request.getHeader(key)
+            map.put(key, value)
+        }
+        return map
+    }
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(ActionsServlet::class.java)
+    }
 
 }

@@ -14,52 +14,55 @@
  * limitations under the License.
  */
 
-package com.example;
+package com.example
 
-import com.google.actions.api.ActionRequest;
-import com.google.actions.api.ActionResponse;
-import com.google.actions.api.DialogflowApp;
-import com.google.actions.api.ForIntent;
-import com.google.actions.api.response.ResponseBuilder;
-import com.google.api.services.actions_fulfillment.v2.model.User;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.actions.api.ActionRequest
+import com.google.actions.api.ActionResponse
+import com.google.actions.api.DialogflowApp
+import com.google.actions.api.ForIntent
+import com.google.actions.api.response.ResponseBuilder
+import com.google.api.services.actions_fulfillment.v2.model.User
+import java.util.ResourceBundle
+import java.util.stream.Collectors
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Implements all intent handlers for this Action. Note that your App must extend from DialogflowApp
  * if using Dialogflow or ActionsSdkApp for ActionsSDK based Actions.
  */
-public class MyActionsApp extends DialogflowApp {
+class MyActionsApp : DialogflowApp() {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MyActionsApp.class);
+    @ForIntent("Default Welcome Intent")
+    fun welcome(request: ActionRequest): ActionResponse {
+        LOGGER.info("Welcome intent start.")
+        val responseBuilder = getResponseBuilder(request)
+        val rb = ResourceBundle.getBundle("resources")
+        val user = request.user
 
-  @ForIntent("Default Welcome Intent")
-  public ActionResponse welcome(ActionRequest request) {
-    LOGGER.info("Welcome intent start.");
-    ResponseBuilder responseBuilder = getResponseBuilder(request);
-    ResourceBundle rb = ResourceBundle.getBundle("resources");
-    User user = request.getUser();
+        if (user != null && user.lastSeen != null) {
+            responseBuilder.add(rb.getString("welcome_back"))
+        } else {
+            responseBuilder.add(rb.getString("welcome"))
+        }
 
-    if (user != null && user.getLastSeen() != null) {
-      responseBuilder.add(rb.getString("welcome_back"));
-    } else {
-      responseBuilder.add(rb.getString("welcome"));
+        LOGGER.info("Welcome intent end.")
+        return responseBuilder.build()
     }
 
-    LOGGER.info("Welcome intent end.");
-    return responseBuilder.build();
-  }
+    @ForIntent("bye")
+    fun bye(request: ActionRequest): ActionResponse {
+        LOGGER.info("Bye intent start.")
+        val responseBuilder = getResponseBuilder(request)
+        val rb = ResourceBundle.getBundle("resources")
 
-  @ForIntent("bye")
-  public ActionResponse bye(ActionRequest request) {
-    LOGGER.info("Bye intent start.");
-    ResponseBuilder responseBuilder = getResponseBuilder(request);
-    ResourceBundle rb = ResourceBundle.getBundle("resources");
+        responseBuilder.add(rb.getString("bye")).endConversation()
+        LOGGER.info("Bye intent end.")
+        return responseBuilder.build()
+    }
 
-    responseBuilder.add(rb.getString("bye")).endConversation();
-    LOGGER.info("Bye intent end.");
-    return responseBuilder.build();
-  }
+    companion object {
+
+        private val LOGGER = LoggerFactory.getLogger(MyActionsApp::class.java)
+    }
 }

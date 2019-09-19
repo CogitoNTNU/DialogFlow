@@ -14,71 +14,70 @@
  * limitations under the License.
  */
 
-package com.example;
+package com.example
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
-import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-import com.google.actions.api.App;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import java.io.*;
+import com.amazonaws.services.lambda.runtime.Context
+import com.amazonaws.services.lambda.runtime.RequestStreamHandler
+import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
+import org.json.simple.parser.ParseException
+import java.io.*
 
 /**
  * Handles request received via AWS - API Gateway [proxy integration](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html)
  * and delegates to your Actions App.
  */
-public class ActionsAWSHandler implements RequestStreamHandler {
-  // Replace this with your webhook.
-  private final App actionsApp = new MyActionsApp();
-  private final JSONParser parser = new JSONParser();
+class ActionsAWSHandler : RequestStreamHandler {
+    // Replace this with your webhook.
+    private val actionsApp = MyActionsApp()
+    private val parser = JSONParser()
 
-  @Override
-  public void handleRequest(InputStream inputStream,
-                            OutputStream outputStream,
-                            Context context) throws IOException {
-    BufferedReader reader = new BufferedReader(
-            new InputStreamReader(inputStream));
-    JSONObject awsResponse = new JSONObject();
-    LambdaLogger logger = context.getLogger();
-    try {
-      JSONObject awsRequest = (JSONObject) parser.parse(reader);
-      JSONObject headers = (JSONObject) awsRequest.get("headers");
-      String body = (String) awsRequest.get("body");
-      logger.log("AWS request body = " + body);
+    @Throws(IOException::class)
+    override fun handleRequest(inputStream: InputStream,
+                               outputStream: OutputStream,
+                               context: Context) {
+        val reader = BufferedReader(
+                InputStreamReader(inputStream))
+        val awsResponse = JSONObject()
+        val logger = context.logger
+        try {
+            val awsRequest = parser.parse(reader) as JSONObject
+            val headers = awsRequest["headers"] as JSONObject
+            val body = awsRequest["body"] as String
+            logger.log("AWS request body = $body")
 
-      actionsApp.handleRequest(body, headers)
-              .thenAccept((webhookResponseJson) -> {
-                logger.log("Generated json = " + webhookResponseJson);
+            actionsApp.handleRequest(body, headers)
+                    .thenAccept { webhookResponseJson ->
+                        logger.log("Generated json = $webhookResponseJson")
 
-                JSONObject responseHeaders = new JSONObject();
-                responseHeaders.put("Content-Type", "application/json");
+                        val responseHeaders = JSONObject()
+                        responseHeaders["Content-Type"] = "application/json"
 
-                awsResponse.put("statusCode", "200");
-                awsResponse.put("headers", responseHeaders);
-                awsResponse.put("body", webhookResponseJson);
-                writeResponse(outputStream, awsResponse);
-              }).exceptionally((throwable -> {
-        awsResponse.put("statusCode", "500");
-        awsResponse.put("exception", throwable);
-        writeResponse(outputStream, awsResponse);
-        return null;
-      }));
+                        awsResponse["statusCode"] = "200"
+                        awsResponse["headers"] = responseHeaders
+                        awsResponse["body"] = webhookResponseJson
+                        writeResponse(outputStream, awsResponse)
+                    }.exceptionally { throwable ->
+                        awsResponse["statusCode"] = "500"
+                        awsResponse["exception"] = throwable
+                        writeResponse(outputStream, awsResponse)
+                        null
+                    }
 
-    } catch (ParseException e) {
-      e.printStackTrace();
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+
     }
-  }
 
-  private void writeResponse(OutputStream outputStream, JSONObject responseJson) {
-    try {
-      OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
-      writer.write(responseJson.toJSONString());
-      writer.close();
-    } catch (IOException e) {
-      e.printStackTrace();
+    private fun writeResponse(outputStream: OutputStream, responseJson: JSONObject) {
+        try {
+            val writer = OutputStreamWriter(outputStream, "UTF-8")
+            writer.write(responseJson.toJSONString())
+            writer.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
     }
-  }
 }
