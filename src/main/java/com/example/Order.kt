@@ -10,27 +10,35 @@ class Order
 
     fun addPizza(pizza: Pizza)
     {
-        this.pizzas.add(pizza)
+        pizzas.add(pizza)
+    }
+
+    fun addPizza(pizza: List<Pizza>)
+    {
+        for(p in pizza)
+        {
+            pizzas.add(p)
+        }
     }
 
     fun addSide(side: Side)
     {
-        this.sides.add(side)
+        sides.add(side)
     }
 
     fun addDrink(drink: Drink)
     {
-        this.drinks.add(drink)
+        drinks.add(drink)
     }
 
     fun setName(name_: String)
     {
-        this.name = name_
+        name = name_
     }
 
     fun setPhone(phone_: String)
     {
-        this.phone = phone_
+        phone = phone_
     }
 
     fun changePizza(pizza: Pizza, remove: List<Ingredient>, add: List<Ingredient>)
@@ -59,7 +67,4 @@ class Order
     {
         drinks.pop(drink)
     }
-
-
-
 }
