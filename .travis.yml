@@ -1,27 +1,32 @@
 dist: xenial
 language: java
 
-before_install:
-- openssl aes-256-cbc -K $encrypted_5b9474172531_key -iv $encrypted_5b9474172531_iv
-  -in Dialogflow-prosjektet-80303a8d5040.json.enc -out Dialogflow-prosjektet-80303a8d5040.json
-  -d
-
 env:
   - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
-install:
-  # - rm -R $HOME/google-cloud-sdk
-  # If the SDK is not already cached, download it and unpack it
-  - if [ ! -d ${HOME}/google-cloud-sdk ]; then
-    curl https://sdk.cloud.google.com | bash;
-    fi
-  - export PATH=$HOME/google-cloud-sdk/bin:$PATH
-  - gcloud components install app-engine-java
-  - gcloud auth activate-service-account --key-file=Dialogflow-prosjektet-80303a8d5040.json
-  - gcloud config set project dialogflow-cogito
+jobs:
+  include:
+    - stage: build-and-test
+      script: ./gradlew build test assemble
+    - stage: deploy
+      before_install:
+        - openssl aes-256-cbc -K $encrypted_5b9474172531_key -iv $encrypted_5b9474172531_iv
+          -in Dialogflow-prosjektet-80303a8d5040.json.enc -out Dialogflow-prosjektet-80303a8d5040.json
+          -d
+      install:
+        - if [ ! -d ${HOME}/google-cloud-sdk ]; then
+          curl https://sdk.cloud.google.com | bash;
+          fi
+        - export PATH=$HOME/google-cloud-sdk/bin:$PATH
+        - gcloud components install app-engine-java
+        - gcloud auth activate-service-account --key-file=Dialogflow-prosjektet-80303a8d5040.json
+        - gcloud config set project dialogflow-cogito
+      script: ./gradlew assemble appengineDeploy
 
-script:
-  - ./gradlew build test assemble appengineDeploy
+stages:
+  - build-and-test
+  - name: deploy
+    if: branch = master
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
