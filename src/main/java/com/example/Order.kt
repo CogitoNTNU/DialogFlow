@@ -1,10 +1,10 @@
 package com.example
 
-class Bestilling
+class Order
 {
     private var pizzas = mutableListOf<Pizza>()
-    private var sides = mutableListOf<Pizza>()
-    private var drinks = mutableListOf<Pizza>()
+    private var sides = mutableListOf<Side>()
+    private var drinks = mutableListOf<Drink>()
     private var name = ""
     private var phone = ""
 
@@ -44,5 +44,22 @@ class Bestilling
             }
         }
     }
+
+    fun removePizza(pizza: Pizza)
+    {
+        pizzas.pop(pizza)
+    }
+
+    fun removeSide(side: Side)
+    {
+        sides.pop(side)
+    }
+
+    fun removeDrink(drink: Drink)
+    {
+        drinks.pop(drink)
+    }
+
+
 
 }
