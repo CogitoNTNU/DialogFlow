@@ -4,8 +4,7 @@ before_install:
   -d
 
 script:
-  - ./gradlew assemble
-  - ./gradlew appengineStage
+  - ./gradlew build test assemble appengineStage
 
 deploy:
   provider: gae
