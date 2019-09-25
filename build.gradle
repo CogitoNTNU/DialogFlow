@@ -24,6 +24,7 @@ buildscript {
 
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -44,6 +45,8 @@ dependencies {
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    implementation 'com.beust:klaxon:5.0.1'
 }
 
 compileKotlin {

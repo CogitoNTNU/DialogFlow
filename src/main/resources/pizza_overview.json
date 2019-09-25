@@ -1,0 +1,152 @@
+{"pizza":[
+  { "nr": 1,
+    "name": "Den Enkle",
+    "ingredients": ["ost", "tomatsaus"],
+    "price":[39, 89, 119, 119]
+  },
+  { "nr": 2,
+    "name": "Kvess",
+    "ingredients": ["ost", "tomatsaus", "skinke", "sjampinjong"],
+    "price":[54, 129, 175, 175]
+  },
+  { "nr": 3,
+    "name": "Drømmen",
+    "ingredients": ["ost", "tomatsaus", "kjøttdeig", "parika"],
+    "price":[54, 129, 169, 169]
+  },
+  { "nr": 4,
+    "name": "Pizzabakeren spesial",
+    "ingredients": ["ost", "tomatsaus", "kjøttdeig", "løk", "bacon"],
+    "price":[56, 139, 195, 195]
+  },
+  { "nr": 5,
+    "name": "Snadder",
+    "ingredients": ["ost", "tomatsaus", "kjøttdeig", "løk", "ananas"],
+    "price":[54, 135, 185, 185]
+  },
+  { "nr": 6,
+    "name": "Mix",
+    "ingredients": ["ost", "tomatsaus", "pepperoni", "løk"],
+    "price":[55, 139, 195, 195]
+  },
+  { "nr": 7,
+    "name": "Meksikaneren",
+    "ingredients": ["ost", "tomatsaus", "marinert kylling", "marinert biff", "nachoschips", "hvitløk", "mais", "chili"],
+    "price":[69, 149, 215, 215]
+  },
+  { "nr": 8,
+    "name": "Biffen",
+    "ingredients": ["ost", "tomatsaus", "marinert biff", "bacon", "hvitløk"],
+    "price":[69, 149, 215, 215]
+  },
+  { "nr": 9,
+    "name": "Den marinerte",
+    "ingredients": ["ost", "tomatsaus", "marinert biff", "sjampinjong", "løk"],
+    "price":[63, 139, 205, 205]
+  },
+  { "nr": 10,
+    "name": "Peppersvennen",
+    "ingredients": ["ost", "tomatsaus", "pepperbiff", "sjampinjong", "løk", "paprika"],
+    "price":[63, 139, 205, 205]
+  },
+  { "nr": 11,
+    "name": "Flammen",
+    "ingredients": ["ost", "tomatsaus", "kjøttdeig", "nachoschips", "jalapeños"],
+    "price":[63, 139, 199, 199]
+  },
+  { "nr": 12,
+    "name": "Tacokyllingen",
+    "ingredients": ["ost", "tomatsaus", "kjøttdeig", "marinert kylling", "nachoschips", "jalapeños"],
+    "price":[69, 149, 209, 209]
+  },
+  { "nr": 13,
+    "name": "Kokkens kylling",
+    "ingredients": ["ost", "tomatsaus", "marinert kylling", "løk", "mais", "sjampinjong"],
+    "price":[62, 139, 199, 199]
+  },
+  { "nr": 14,
+    "name": "Kokkens favoritt",
+    "ingredients": ["ost", "tomatsaus", "kjøttdeig", "luksusbacon", "ananas"],
+    "price":[63, 139, 199, 199]
+  },
+  { "nr": 15,
+    "name": "Gnisten",
+    "ingredients": ["ost", "tomatsaus", "kjøttdeig", "løk", "hvitløk", "jalapeños"],
+    "price":[62, 139, 189]
+  },
+  { "nr": 16,
+    "name": "Luksuskylling",
+    "ingredients": ["ost", "tomatsaus", "marinert kylling", "luksusbacon", "løk", "paprika"],
+    "price":[69, 149, 215, 215]
+  },
+  { "nr": 17,
+    "name": "Kyllingfarmen",
+    "ingredients": ["ost", "tomatsaus", "marinert kylling", "chili", "pesto", "tomater"],
+    "price":[63, 139, 199, 199]
+  },
+  { "nr": 18,
+    "name": "Vegetarianeren",
+    "ingredients": ["ost", "tomatsaus", "ananas", "sjampinjong", "løk", "mais", "paprika"],
+    "price":[49, 119, 149, 149]
+  },
+  { "nr": 19,
+    "name": "Kebaben",
+    "ingredients": ["ost", "tacosaus", "kebabkjøtt", "mais", "rødløk", "jalapeños", "kebab hvitløksdressing"],
+    "price":[67, 149, 205, 205]
+  },
+  { "nr": 20,
+    "name": "Drengen",
+    "ingredients": ["ost", "tomatsaus", "skinke", "bacon"],
+    "price":[54, 135, 189, 189]
+  },
+  { "nr": 21,
+    "name": "Mr.x",
+    "ingredients": ["ost", "tomatsaus", "kjøttdeig", "pepperoni", "løk", "ananas"],
+    "price":[63, 139, 199, 199]
+  },
+  { "nr": 22,
+    "name": "Chorizo spesial",
+    "ingredients": ["ost", "tomatsaus", "chorizo", "marinert biff", "løk"],
+    "price":[63, 139, 199, 199]
+  },
+  { "nr": 23,
+    "name": "Dobbeldekker",
+    "ingredients": ["ost", "tomatsaus", "skinke", "kjøttdeig", "oregano"],
+    "price":[63, 139, 189, 189]
+  },
+  { "nr": 24,
+    "name": "Heit kylling",
+    "ingredients": ["ost", "tomatsaus", "sterk og marinert kylling", "bacon", "ananas"],
+    "price":[63, 139, 199, 199]
+  },
+  { "nr": 25,
+    "name": "Chorizoen",
+    "ingredients": ["ost", "tomatsaus", "chorizo", "pesto", "oregano", "tomat"],
+    "price":[63, 139, 195, 195]
+  },
+  { "nr": 26,
+    "name": "Tospannet",
+    "ingredients": ["ost", "tomatsaus", "pepperoni", "skinke", "ananas"],
+    "price":[54, 129, 169, 169]
+  },
+  { "nr": 27,
+    "name": "Squashen",
+    "ingredients": ["ost", "tomatsaus", "fetaost", "hvitløk", "chili", "squash", "rødløk"],
+    "price":[49, 125, 159, 159]
+  },
+  { "nr": 28,
+    "name": "Hottentoppen",
+    "ingredients": ["ost", "tomatsaus", "pepperbiff", "pepperoni", "parika"],
+    "price":[62, 139, 199, 199]
+  },
+  { "nr": 29,
+    "name": "BBQen",
+    "ingredients": ["ost", "tomatsaus", "marinert svinekjøtt", "bacon", "mais", "rødløk", "BBQ-saus"],
+    "price":[67, 149, 209, 209]
+  },
+  { "nr": 31,
+    "name": "Kruttsterk",
+    "ingredients": ["ost", "tomatsaus", "chili", "sterk og marinert kylling", "rødløk", "jalapeños"],
+    "price":[59, 139, 189, 189]
+  }
+]}
