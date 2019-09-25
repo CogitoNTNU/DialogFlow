@@ -33,6 +33,21 @@ import org.slf4j.LoggerFactory
  */
 class MyActionsApp : DialogflowApp() {
 
+    @ForIntent("Bestill pizza intent")
+    fun bestill(request: ActionRequest): ActionResponse {
+        LOGGER.info("Bestill pizza start")
+        val responseBuilder = getResponseBuilder(request)
+        val rb = ResourceBundle.getBundle("resources")
+        val user = request.user
+
+        val test = request.getParameter("Type")
+
+        responseBuilder.add("Pizza er godt!" + test)
+
+        LOGGER.info("Bestill pizza slutt")
+        return responseBuilder.build()
+    }
+
     @ForIntent("Default Welcome Intent")
     fun welcome(request: ActionRequest): ActionResponse {
         LOGGER.info("Welcome intent start.")
