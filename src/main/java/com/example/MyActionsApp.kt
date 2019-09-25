@@ -22,6 +22,7 @@ import com.google.actions.api.DialogflowApp
 import com.google.actions.api.ForIntent
 import com.google.actions.api.response.ResponseBuilder
 import com.google.api.services.actions_fulfillment.v2.model.User
+import getPizzaMenu
 import java.util.ResourceBundle
 import java.util.stream.Collectors
 import org.slf4j.Logger
@@ -33,6 +34,9 @@ import org.slf4j.LoggerFactory
  */
 class MyActionsApp : DialogflowApp() {
 
+    val pizzaMenu = getPizzaMenu()
+    val order = Order()
+
     @ForIntent("Bestill pizza intent")
     fun bestill(request: ActionRequest): ActionResponse {
         LOGGER.info("Bestill pizza start")
@@ -40,9 +44,21 @@ class MyActionsApp : DialogflowApp() {
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
 
-        val test = request.getParameter("Type")
+        var type = request.getParameter("Type")
 
-        responseBuilder.add("Pizza er godt!" + test)
+        var pizza = pizzaMenu.getPizza(type.toString())
+        if(pizza != null)
+        {
+            order.addPizza(pizza)
+        }
+        else
+        {
+            // pizza finnes ikke
+        }
+
+
+
+        responseBuilder.add("Pizza er godt!" + type)
 
         LOGGER.info("Bestill pizza slutt")
         return responseBuilder.build()
