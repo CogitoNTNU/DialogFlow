@@ -1,5 +1,7 @@
 package com.example
 
+import Pizza
+
 // Data classes for storing drinks and side dishes
 data class Extra (val name: String, val price: Double);
 
@@ -56,7 +58,7 @@ class Order
 
     fun removePizza(pizza: Pizza)
     {
-        pizzas.pop(pizza)
+        pizzas.remove(pizza)
     }
 
     fun removeExtras(item: Extra)
