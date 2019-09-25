@@ -40,7 +40,9 @@ class MyActionsApp : DialogflowApp() {
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
 
-        responseBuilder.add("Pizza er godt!")
+        val test = request.getParameter("Type")
+
+        responseBuilder.add("Pizza er godt!" + test)
 
         LOGGER.info("Bestill pizza slutt")
         return responseBuilder.build()
