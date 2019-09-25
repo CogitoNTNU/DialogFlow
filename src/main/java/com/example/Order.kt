@@ -1,10 +1,12 @@
 package com.example
-/*
+
+// Data classes for storing drinks and side dishes
+data class Extra (val name: String, val price: Double);
+
 class Order
 {
     private var pizzas = mutableListOf<Pizza>()
-    private var sides = mutableListOf<Side>()
-    private var drinks = mutableListOf<Drink>()
+    private var extras = mutableListOf<Extra>()
     private var name = ""
     private var phone = ""
 
@@ -21,14 +23,14 @@ class Order
         }
     }
 
-    fun addSide(side: Side)
+    fun addExtra(side: Extra)
     {
-        sides.add(side)
+        extras.add(side)
     }
 
-    fun addDrink(drink: Drink)
+    fun addExtra(itemName: String, price: Double)
     {
-        drinks.add(drink)
+        extras.add(Extra(itemName, price))
     }
 
     fun setName(name_: String)
@@ -41,14 +43,13 @@ class Order
         phone = phone_
     }
 
-    fun changePizza(pizza: Pizza, remove: List<Ingredient>, add: List<Ingredient>)
+    fun changePizza(pizza: Pizza, remove: List<String>, add: List<String>)
     {
         for(p in pizzas)
         {
             if (p  == pizza)
             {
-                // TODO: add / remove
-                // wait for Pizza class implementation
+                p.change(remove, add);
             }
         }
     }
@@ -58,17 +59,20 @@ class Order
         pizzas.pop(pizza)
     }
 
-    fun removeSide(side: Side)
+    fun removeExtras(item: Extra)
     {
-        sides.pop(side)
+        extras.remove(item)
     }
 
-    fun removeDrink(drink: Drink)
+    fun removeExtras(itemName: String)
     {
-        drinks.pop(drink)
+        for(e in extras)
+        {
+            if(e.name == itemName)
+            {
+                extras.remove(e)
+            }
+        }
     }
-
-
-
 }
-*/
+
