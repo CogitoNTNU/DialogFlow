@@ -1,9 +1,14 @@
-import com.beust.klaxon.*
+import com.beust.klaxon.Klaxon
 import java.io.FileReader
 
 
 
-data class Pizza(val nr:Int, val name: String, val ingredients:List<String>, val price:List<Int>)
+data class Pizza(val nr:Int, val name: String, val ingredients:Set<String>, val price:List<Int>) {
+    fun change(remove: List<String>, add: List<String>) {
+        TODO("This isn't supported yet")
+    }
+}
+
 data class PizzaMenu(val pizza:List<Pizza>)
 
 val json = FileReader("src/main/resources/pizza_overview.json")
