@@ -58,7 +58,7 @@ class MyActionsApp : DialogflowApp() {
 
 
 
-        responseBuilder.add("Pizza er godt!" + "Nr pizza som personen vil ha: " + test)
+        responseBuilder.add("Pizza er godt!" + "Nr pizza som personen vil ha: " + type)
 
         LOGGER.info("Bestill pizza slutt")
         return responseBuilder.build()
