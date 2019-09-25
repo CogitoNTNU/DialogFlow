@@ -12,6 +12,7 @@ Cogito prosjekt med DialogFlow.
 - Bestill sideretter.
 - Bestill drikke.
 - Leveringsmåte.
+    - Når
     - Hentes
     - Leveres
         - Hvor
