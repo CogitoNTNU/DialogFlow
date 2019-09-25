@@ -42,7 +42,7 @@ class MyActionsApp : DialogflowApp() {
 
         val test = request.getParameter("Type")
 
-        responseBuilder.add("Pizza er godt!" + test)
+        responseBuilder.add("Pizza er godt!" + "Nr pizza som personen vil ha: " + test)
 
         LOGGER.info("Bestill pizza slutt")
         return responseBuilder.build()
