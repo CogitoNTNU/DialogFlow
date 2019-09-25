@@ -15,7 +15,7 @@ class DialogflowEntityGenerator {
 
     @Test
     fun generatePizzaEntityJson() {
-        val entities = pizzaMenu.pizza.map { pizza ->
+        val entities = pizzaMenu.pizzaList.map { pizza ->
             DialogflowEntity(pizza.nr.toString(), listOf(
                     pizza.nr.toString(),
                     pizza.name,
@@ -27,10 +27,11 @@ class DialogflowEntityGenerator {
         println(json)
     }
 
-    @Test fun generateIngredientEntityJson() {
-        val entities = pizzaMenu.pizza
+    @Test
+    fun generateIngredientEntityJson() {
+        val entities = pizzaMenu.pizzaList
                 .map { it.ingredients }
-                .reduce { resultat, ingredientSet -> resultat+ingredientSet }
+                .reduce { resultat, ingredientSet -> resultat + ingredientSet }
                 .map { ingredient -> DialogflowEntity(ingredient, makeIngredientSynonyms(ingredient)) }
 
         val json = klaxon.toJsonString(entities)

@@ -20,13 +20,9 @@ import com.google.actions.api.ActionRequest
 import com.google.actions.api.ActionResponse
 import com.google.actions.api.DialogflowApp
 import com.google.actions.api.ForIntent
-import com.google.actions.api.response.ResponseBuilder
-import com.google.api.services.actions_fulfillment.v2.model.User
 import getPizzaMenu
-import java.util.ResourceBundle
-import java.util.stream.Collectors
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.*
 
 /**
  * Implements all intent handlers for this Action. Note that your App must extend from DialogflowApp
@@ -44,9 +40,9 @@ class MyActionsApp : DialogflowApp() {
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
 
-        var type = request.getParameter("Type")
+        val type = request.getParameter("Type").toString().toInt()
 
-        var pizza = pizzaMenu.getPizza(type.toString())
+        var pizza = pizzaMenu.getPizza(type)
         if(pizza != null)
         {
             order.addPizza(pizza)
@@ -58,7 +54,7 @@ class MyActionsApp : DialogflowApp() {
 
 
 
-        responseBuilder.add("Pizza er godt!" + "Nr pizza som personen vil ha: " + type)
+        responseBuilder.add("Brukeren ville ha $type, og får ${pizza?.name}")
 
         LOGGER.info("Bestill pizza slutt")
         return responseBuilder.build()
