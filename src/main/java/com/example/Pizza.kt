@@ -1,7 +1,7 @@
 import com.beust.klaxon.Klaxon
 import java.io.File
 import java.io.FileReader
-
+import java.util.*
 
 
 data class Pizza(val nr:Int, val name: String, val ingredients:Set<String>, val price:List<Int>) {
@@ -17,7 +17,7 @@ data class PizzaMenu(val pizzaList:List<Pizza>)
     fun getPizza(name: String) = pizzaList.find { it.name == name }
 }
 
-val json = File("src/main/resources/pizza_overview.json")
+val json = File(Pizza::javaClass.javaClass.getResource("pizza_overview.json").file)
 
 
 
