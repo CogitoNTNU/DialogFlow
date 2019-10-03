@@ -55,7 +55,7 @@ class MyActionsApp : DialogflowApp() {
         return responseBuilder.build()
     }
 
-    @ForIntent("order.list")
+    @ForIntent("List bestilling")
     fun listOrder(request: ActionRequest): ActionResponse {
         val responseBuilder = getResponseBuilder(request)
         val order: Order = Order.fromMap(request.conversationData)
