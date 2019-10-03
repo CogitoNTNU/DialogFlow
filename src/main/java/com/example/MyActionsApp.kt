@@ -80,15 +80,19 @@ class MyActionsApp : DialogflowApp() {
 
         val order: Order = Order.fromMap(request.conversationData)
 
-        //val rm_i = request.getParameter("rm_i") as List<String>
-        val rm_i = request.getParameter("rm_i") as List<String>
+        if(order.pizzas.size >= 0) {
 
-        order.changePizza(order.pizzas[0], rm_i, emptyList())
-        
-        responseBuilder.add("Removed ${rm_i[0]}, u little B*tch" +
-                "\nThe first pizza in your order now contains the ingredients:\n" +
-                "${order.pizzas[0].ingredients}")
+            //val rm_i = request.getParameter("rm_i") as List<String>
+            val rm_i = request.getParameter("rm_i") as List<String>
 
+            order.changePizza(order.pizzas[0], rm_i, emptyList())
+
+            responseBuilder.add("Removed ${rm_i[0]}, u little B*tch" +
+                    "\nThe first pizza in your order now contains the ingredients:\n" +
+                    "${order.pizzas[0].ingredients}")
+        }else{
+            responseBuilder.add("F*CK of u cunt, trying to remove ingredients from pizza u have not orderd")
+        }
         LOGGER.info("Fjern ingredients slutt")
         return responseBuilder.build()
     }
