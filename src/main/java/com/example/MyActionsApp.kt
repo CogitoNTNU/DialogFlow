@@ -62,10 +62,16 @@ class MyActionsApp : DialogflowApp() {
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
 
+        val order: Order = Order.fromMap(request.conversationData)
+
         //val rm_i = request.getParameter("rm_i") as List<String>
         val rm_i = request.getParameter("rm_i") as List<String>
+
+        order.changePizza(order.pizzas[0], rm_i, emptyList())
         
-        responseBuilder.add("Removed ${rm_i[0]}, u little B*tch")
+        responseBuilder.add("Removed ${rm_i[0]}, u little B*tch" +
+                "\nThe first pizza in your order now contains the ingredients:\n" +
+                "${order.pizzas[0].ingredients}")
 
         LOGGER.info("Fjern ingredients slutt")
         return responseBuilder.build()

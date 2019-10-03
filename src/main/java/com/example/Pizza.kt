@@ -4,9 +4,10 @@ import com.beust.klaxon.Klaxon
 import java.io.File
 
 
-data class Pizza(val nr: Int, val name: String, val ingredients: Set<String>, val price: List<Int>) {
+data class Pizza(val nr: Int, val name: String, var ingredients: Set<String>, val price: List<Int>) {
     fun change(remove: List<String>, add: List<String>) {
-        TODO("This isn't supported yet")
+        ingredients = ingredients - remove.toSet()
+        ingredients = ingredients + add.toSet()
     }
 }
 
