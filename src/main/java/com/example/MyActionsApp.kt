@@ -33,7 +33,7 @@ class MyActionsApp : DialogflowApp() {
     val pizzaMenu = getPizzaMenu()
     val order = Order()
 
-    @ForIntent("Bestill pizza intent")
+    @ForIntent("Legg til pizza intent")
     fun bestill(request: ActionRequest): ActionResponse {
         LOGGER.info("Bestill pizza start")
         val responseBuilder = getResponseBuilder(request)
@@ -52,13 +52,27 @@ class MyActionsApp : DialogflowApp() {
             // pizza finnes ikke
         }
 
-
-
         responseBuilder.add("Brukeren ville ha $type, og får ${pizza?.name}")
 
         LOGGER.info("Bestill pizza slutt")
         return responseBuilder.build()
     }
+
+    @ForIntent("Fjern ingredients intent")
+    fun remove_ingredient(request: ActionRequest): ActionResponse {
+        LOGGER.info("Fjern ingredients start")
+        val responseBuilder = getResponseBuilder(request)
+        val rb = ResourceBundle.getBundle("resources")
+        val user = request.user
+
+        val rm_i = request.getParameter("rm_i").toString()
+
+        responseBuilder.add("Removed $rm_i, u little B*tch")
+
+        LOGGER.info("Fjern ingredients slutt")
+        return responseBuilder.build()
+    }
+
 
     @ForIntent("Default Welcome Intent")
     fun welcome(request: ActionRequest): ActionResponse {
