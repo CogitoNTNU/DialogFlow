@@ -1,7 +1,6 @@
 package com.example
 
 import com.beust.klaxon.Klaxon
-import getPizzaMenu
 import org.junit.Test
 
 data class DialogflowEntity(val value: String, val synonyms: List<String>)
