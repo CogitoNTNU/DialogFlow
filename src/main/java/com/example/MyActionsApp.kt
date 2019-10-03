@@ -20,7 +20,6 @@ import com.google.actions.api.ActionRequest
 import com.google.actions.api.ActionResponse
 import com.google.actions.api.DialogflowApp
 import com.google.actions.api.ForIntent
-import getPizzaMenu
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -43,12 +42,9 @@ class MyActionsApp : DialogflowApp() {
         val type = request.getParameter("Type").toString().toInt()
 
         var pizza = pizzaMenu.getPizza(type)
-        if(pizza != null)
-        {
+        if (pizza != null) {
             order.addPizza(pizza)
-        }
-        else
-        {
+        } else {
             // pizza finnes ikke
         }
 
