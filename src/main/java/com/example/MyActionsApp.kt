@@ -55,6 +55,22 @@ class MyActionsApp : DialogflowApp() {
         return responseBuilder.build()
     }
 
+    @ForIntent("order.list")
+    fun listOrder(request: ActionRequest): ActionResponse {
+        val responseBuilder = getResponseBuilder(request)
+        val order: Order = Order.fromMap(request.conversationData)
+
+        val outString = StringBuilder("Du har bestilt ${order.pizzas.size} pizza")
+        if (order.pizzas.size != 1) outString.append("er")
+        outString.append(". ")
+        val spokenPizzas = order.pizzas.map { pizza -> "En nr. ${pizza.nr} ${pizza.name}, med ${spokenList(pizza.ingredients)}" }
+        outString.append(spokenList(spokenPizzas))
+
+        responseBuilder.add(outString.toString())
+
+        return responseBuilder.build()
+    }
+
     @ForIntent("Fjern ingredients intent")
     fun remove_ingredient(request: ActionRequest): ActionResponse {
         LOGGER.info("Fjern ingredients start")
