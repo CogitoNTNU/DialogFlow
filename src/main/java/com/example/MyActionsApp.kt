@@ -80,7 +80,7 @@ class MyActionsApp : DialogflowApp() {
 
         val order: Order = Order.fromMap(request.conversationData)
 
-        if(order.pizzas.size >= 0) {
+        if(order.pizzas.size > 0) {
 
             //val rm_i = request.getParameter("rm_i") as List<String>
             val rm_i = request.getParameter("rm_i") as List<String>
