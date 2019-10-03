@@ -62,10 +62,9 @@ class MyActionsApp : DialogflowApp() {
         val user = request.user
 
         //val rm_i = request.getParameter("rm_i") as List<String>
-        val rm_i = request.getParameter("rm_i").toString()
-
-
-        responseBuilder.add("Removed $rm_i, u little B*tch")
+        val rm_i = request.getParameter("rm_i") as List<String>
+        
+        responseBuilder.add("Removed ${rm_i[0]}, u little B*tch")
 
         LOGGER.info("Fjern ingredients slutt")
         return responseBuilder.build()
