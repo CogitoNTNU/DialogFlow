@@ -30,14 +30,14 @@ import java.util.*
 class MyActionsApp : DialogflowApp() {
 
     val pizzaMenu = getPizzaMenu()
-    val order = Order()
 
     @ForIntent("Legg til pizza intent")
     fun bestill(request: ActionRequest): ActionResponse {
         LOGGER.info("Bestill pizza start")
         val responseBuilder = getResponseBuilder(request)
-        val rb = ResourceBundle.getBundle("resources")
         val user = request.user
+
+        val order: Order = Order.fromMap(request.conversationData)
 
         val type = request.getParameter("Type").toString().toInt()
 
@@ -50,6 +50,7 @@ class MyActionsApp : DialogflowApp() {
 
         responseBuilder.add("Brukeren ville ha $type, og får ${pizza?.name}")
 
+        responseBuilder.conversationData?.put("order", order.toJson())
         LOGGER.info("Bestill pizza slutt")
         return responseBuilder.build()
     }

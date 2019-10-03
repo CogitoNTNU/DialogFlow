@@ -1,14 +1,14 @@
 package com.example
 
+import com.beust.klaxon.Klaxon
+
 // Data classes for storing drinks and side dishes
 data class Extra(val name: String, val price: Double)
 
-class Order
-{
-    private var pizzas = mutableListOf<Pizza>()
-    private var extras = mutableListOf<Extra>()
-    var name = ""
-    var phone = ""
+data class Order(var pizzas: MutableList<Pizza> = mutableListOf(),
+                 var extras: MutableList<Extra> = mutableListOf(),
+                 var name: String = "",
+                 var phone: String = "") {
 
     fun addPizza(pizza: Pizza) = pizzas.add(pizza)
 
@@ -25,5 +25,17 @@ class Order
     fun removeExtras(item: Extra) = extras.remove(item)
 
     fun removeExtras(itemName: String) = extras.removeIf { it.name == itemName }
+
+    fun toJson(): String = Klaxon().toJsonString(this)
+    fun toMap(): Map<String, Any> = mapOf("order" to toJson())
+
+    companion object {
+        fun fromJson(string: String): Order? = Klaxon().parse<Order>(string)
+        fun fromMap(map: MutableMap<String, Any>): Order {
+            return if ("order" in map) {
+                fromJson(map["order"] as String) ?: Order()
+            } else Order()
+        }
+    }
 }
 
