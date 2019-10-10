@@ -42,7 +42,9 @@ class MyActionsApp : DialogflowApp() {
         val order: Order = orderManager[request]
 
         var types = (request.getParameter("Type") as List<String>).map({it.toInt()})
-        var amount = (request.getParameter("Amount") as List<Int>?) ?: emptyList()
+        var amount = (request.getParameter("Amount") as List<Any>?)
+                ?.map { if (it is Int) it else it.toString().toInt() }
+                ?: emptyList()
 
         if(amount.size != types.size){
             amount = mutableListOf()
