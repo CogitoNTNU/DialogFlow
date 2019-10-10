@@ -80,6 +80,7 @@ class MyActionsApp : DialogflowApp() {
         else {
             responseBuilder.add("Ukjent pizza, vil du ha noen anbefalinger?")
         }
+        LOGGER.info(responseBuilder.toString())
 
         orderManager[request] = order
         LOGGER.info("Bestill pizza slutt")
