@@ -16,9 +16,7 @@
 
 package com.example
 
-import com.beust.klaxon.Klaxon
 import org.json.JSONObject
-import org.junit.Assert
 import org.junit.Test
 
 class AddPizzaTest {
@@ -34,10 +32,18 @@ class AddPizzaTest {
         val responseJson = JSONObject(future.get())
         val textToSpeech = extractTextToSpeech(responseJson)
 
-        val conversationData = extractConversationData(responseJson)
-        val order = Klaxon().parse<Order>(conversationData.getString("order"))
-
         assert("Kokkens favoritt" in textToSpeech)
-        Assert.assertEquals(Order(mutableListOf(getPizzaMenu().getPizza(14)!!)), order)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testAddTwoPizzas() {
+        val app = MyActionsApp()
+        val requestBody = fromFile("request_add_pizza.json")
+
+        app.handleRequest(requestBody, null).get()
+        app.handleRequest(requestBody, null).get()
+
+        assert(app.orderManager.orders.values.single().pizzas.size == 2)
     }
 }

@@ -28,6 +28,7 @@ import java.util.*
  * if using Dialogflow or ActionsSdkApp for ActionsSDK based Actions.
  */
 class MyActionsApp : DialogflowApp() {
+    val orderManager = OrderManager()
 
     val pizzaMenu = getPizzaMenu()
 
@@ -37,7 +38,8 @@ class MyActionsApp : DialogflowApp() {
         val responseBuilder = getResponseBuilder(request)
         val user = request.user
 
-        val order: Order = Order.fromMap(request.conversationData)
+
+        val order: Order = orderManager[request]
 
         val type = request.getParameter("Type").toString().toInt()
 
@@ -48,9 +50,9 @@ class MyActionsApp : DialogflowApp() {
             // pizza finnes ikke
         }
 
-        responseBuilder.add("Brukeren ville ha $type, og får ${pizza?.name}")
+        responseBuilder.add("Klart det! En ${pizza?.name}")
 
-        responseBuilder.conversationData?.put("order", order.toJson())
+        orderManager[request] = order
         LOGGER.info("Bestill pizza slutt")
         return responseBuilder.build()
     }
@@ -58,12 +60,14 @@ class MyActionsApp : DialogflowApp() {
     @ForIntent("List bestilling")
     fun listOrder(request: ActionRequest): ActionResponse {
         val responseBuilder = getResponseBuilder(request)
-        val order: Order = Order.fromMap(request.conversationData)
+        val order: Order = orderManager[request]
 
         val outString = StringBuilder("Du har bestilt ${order.pizzas.size} pizza")
         if (order.pizzas.size != 1) outString.append("er")
         outString.append(". ")
-        val spokenPizzas = order.pizzas.map { pizza -> "En nr. ${pizza.nr} ${pizza.name}, med ${spokenList(pizza.ingredients)}" }
+        val spokenPizzas = order.pizzas.map { pizza ->
+            "En nr. ${pizza.nr} ${pizza.name}, med ${spokenList(pizza.ingredients)}"
+        }
         outString.append(spokenList(spokenPizzas))
 
         responseBuilder.add(outString.toString())
@@ -72,28 +76,30 @@ class MyActionsApp : DialogflowApp() {
     }
 
     @ForIntent("Fjern ingredients intent")
-    fun remove_ingredient(request: ActionRequest): ActionResponse {
+    fun removeIngredient(request: ActionRequest): ActionResponse {
         LOGGER.info("Fjern ingredients start")
         val responseBuilder = getResponseBuilder(request)
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
 
-        val order: Order = Order.fromMap(request.conversationData)
+        val order: Order = orderManager[request]
 
         if(order.pizzas.size > 0) {
 
             //val rm_i = request.getParameter("rm_i") as List<String>
             val rm_i = request.getParameter("rm_i") as List<String>
 
-            order.changePizza(order.pizzas[0], rm_i, emptyList())
+            order.changePizza(order.pizzas.last(), rm_i, emptyList())
 
-            responseBuilder.add("Removed ${rm_i[0]}, u little B*tch" +
-                    "\nThe first pizza in your order now contains the ingredients:\n" +
-                    "${order.pizzas[0].ingredients}")
+            responseBuilder.add("Removed ${spokenList(rm_i)}, u little B*tch" +
+                    "\nThe last pizza in your order now contains the ingredients:\n" +
+                    spokenList(order.pizzas.last().ingredients))
         }else{
             responseBuilder.add("F*CK of u cunt, trying to remove ingredients from pizza u have not orderd")
         }
         LOGGER.info("Fjern ingredients slutt")
+
+        orderManager[request] = order
         return responseBuilder.build()
     }
 
