@@ -42,7 +42,7 @@ class MyActionsApp : DialogflowApp() {
         val order: Order = orderManager[request]
 
         var types = (request.getParameter("Type") as List<String>).map({it.toInt()})
-        var amount = (request.getParameter("Amount") as List<String>?)?.map({it.toInt()})?: emptyList()
+        var amount = (request.getParameter("Amount") as List<Int>?) ?: emptyList()
 
         if(amount.size != types.size){
             amount = mutableListOf()
@@ -184,7 +184,7 @@ class MyActionsApp : DialogflowApp() {
         }else{
             responseBuilder.add("The choosen ingredient doesnt exist")
         }
-        
+
         LOGGER.info("Finn pizza slutt")
 
         orderManager[request] = order
