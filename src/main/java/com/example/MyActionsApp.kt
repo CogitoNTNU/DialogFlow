@@ -41,22 +41,26 @@ class MyActionsApp : DialogflowApp() {
 
         val order: Order = orderManager[request]
 
-        var types = request.getParameter("Type") as List<Int>
-        var amount = request.getParameter("Type") as List<Int>
+        var types = (request.getParameter("Type") as List<String>).map({it.toInt()})
+        var amount = (request.getParameter("Amount") as List<String>?)?.map({it.toInt()})?: emptyList()
 
-        if(amount.isEmpty() && types.size == 1){
+        if(amount.size != types.size){
             amount = mutableListOf()
-            for (i in 0..types.size){
+            for (i in amount.size until types.size){
                 amount.add(1)
             }
         }
 
+        var totalAmount: MutableList<Int> = mutableListOf()
         var pizzas: MutableList<Pizza> = mutableListOf()
-        for (i in 0..types.size) {
+        var counter = 0
+        for (i in 0 until types.size) {
             var type = types[i]
-            for (j in 0..amount[i]) {
+            for (j in 0 until amount[i]) {
+                totalAmount.add(amount[i])
                 var pizza = pizzaMenu.getPizza(type)
                 if(pizza != null){
+                    counter++
                     pizzas.add(pizza)
                 }
             }
@@ -65,11 +69,9 @@ class MyActionsApp : DialogflowApp() {
         if(pizzas.size > 0){
             order.addPizza(pizzas)
             var response = "Du har bestillt "
-
-            for (i in 0..pizzas.size) {
+            for (i in 0 until pizzas.size) {
                 var pizza = pizzas[i]
-                var number = amount[i]
-
+                var number = totalAmount[i]
                 response += number.toString() +" "+ pizza.name
                 if(i != (pizzas.size-1)){
                     response += " og "
