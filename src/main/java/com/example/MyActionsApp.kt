@@ -120,13 +120,41 @@ class MyActionsApp : DialogflowApp() {
 
             order.changePizza(order.pizzas.last(), rm_i, emptyList())
 
-            responseBuilder.add("Removed ${spokenList(rm_i)}, u little B*tch" +
-                    "\nThe last pizza in your order now contains the ingredients:\n" +
-                    spokenList(order.pizzas.last().ingredients))
+            responseBuilder.add("Removed ${spokenList(rm_i)}, to the ${order.pizzas.last().name}\n" +
+                    "The last pizza in your order now contains the ingredients:\n" +
+                    "${spokenList(order.pizzas.last().ingredients)}")
         }else{
             responseBuilder.add("F*CK of u cunt, trying to remove ingredients from pizza u have not orderd")
         }
         LOGGER.info("Fjern ingredients slutt")
+
+        orderManager[request] = order
+        return responseBuilder.build()
+    }
+
+    @ForIntent("Legg til ingredients intent")
+    fun addIngredient(request: ActionRequest): ActionResponse {
+        LOGGER.info("Legg til ingredients start")
+        val responseBuilder = getResponseBuilder(request)
+        val rb = ResourceBundle.getBundle("resources")
+        val user = request.user
+
+        val order: Order = orderManager[request]
+
+        if(order.pizzas.size > 0) {
+
+            //val rm_i = request.getParameter("rm_i") as List<String>
+            val add_i = request.getParameter("add_i") as List<String>
+
+            order.changePizza(order.pizzas.last(), emptyList(), add_i)
+
+            responseBuilder.add("Added ${spokenList(add_i)}, to the ${order.pizzas.last().name}\n"  +
+                    "\nThe last pizza in your order now contains the ingredients:\n" +
+                    spokenList(order.pizzas.last().ingredients))
+        }else{
+            responseBuilder.add("F*CK of u cunt, trying to add ingredients from pizza u have not orderd")
+        }
+        LOGGER.info("Legg til ingredients slutt")
 
         orderManager[request] = order
         return responseBuilder.build()
