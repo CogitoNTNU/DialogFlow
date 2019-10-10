@@ -40,7 +40,9 @@ class MyActionsApp : DialogflowApp() {
         val order: Order = orderManager[request]
 
         var types = (request.getParameter("Type") as List<String>).map({it.toInt()})
-        var amount = (request.getParameter("Amount") as List<Int>?) ?: emptyList()
+        var amount = (request.getParameter("Amount") as List<Any>?)
+                ?.map { if (it is Int) it else it.toString().toInt() }
+                ?: emptyList()
 
         if(amount.size != types.size){
             amount = mutableListOf()
@@ -173,10 +175,11 @@ class MyActionsApp : DialogflowApp() {
 
 
         if(pizzaList.isNotEmpty()){
-            responseBuilder.add("Here is a list of pizzas u might found interesting: ")
+            var s = "Here is a list of pizzas you might found interesting: "
             for(i in pizzaList){
-                responseBuilder.add("Pizzaen: $i")
+                s += "$i, "
             }
+            responseBuilder.add(s)
         }else{
             responseBuilder.add("The choosen ingredient doesnt exist")
         }
