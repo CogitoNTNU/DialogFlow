@@ -20,6 +20,7 @@ import com.google.actions.api.ActionRequest
 import com.google.actions.api.ActionResponse
 import com.google.actions.api.DialogflowApp
 import com.google.actions.api.ForIntent
+import com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -126,6 +127,35 @@ class MyActionsApp : DialogflowApp() {
             responseBuilder.add("F*CK of u cunt, trying to add ingredients from pizza u have not orderd")
         }
         LOGGER.info("Legg til ingredients slutt")
+
+        orderManager[request] = order
+        return responseBuilder.build()
+    }
+
+
+    @ForIntent("Finn pizza intent")
+    fun findPizza(request: ActionRequest): ActionResponse {
+        LOGGER.info("Finn pizza start")
+        val responseBuilder = getResponseBuilder(request)
+        val rb = ResourceBundle.getBundle("resources")
+        val user = request.user
+
+        val order: Order = orderManager[request]
+
+        val ingredient = request.getParameter("Ingredient") as List<String>
+        val pizzaList = pizzaMenu.pizzaList.filter { pizza -> pizza.ingredients.containsAll(ingredient) }
+
+
+        if(pizzaList.isNotEmpty()){
+            responseBuilder.add("Here is a list of pizzas u might found interesting: ")
+            for(i in pizzaList){
+                responseBuilder.add("Pizzaen: $i")
+            }
+        }else{
+            responseBuilder.add("The choosen ingredient doesnt exist")
+        }
+        
+        LOGGER.info("Finn pizza slutt")
 
         orderManager[request] = order
         return responseBuilder.build()
