@@ -39,9 +39,9 @@ class MyActionsApp : DialogflowApp() {
         val user = request.user
         val order: Order = orderManager[request]
 
-        var types = (request.getParameter("Type") as List<String>).map({it.toInt()})
+        var types = (request.getParameter("Type") as List<String>).map { it.toFloat().toInt() }
         var amount = (request.getParameter("Amount") as List<Any>?)
-                ?.map { if (it is Int) it else it.toString().toInt() }
+                ?.map { if (it is Int) it else it.toString().toFloat().toInt() }
                 ?: emptyList()
 
         if(amount.size != types.size){
@@ -80,6 +80,7 @@ class MyActionsApp : DialogflowApp() {
         else {
             responseBuilder.add("Ukjent pizza, vil du ha noen anbefalinger?")
         }
+        LOGGER.info(responseBuilder.toString())
 
         orderManager[request] = order
         LOGGER.info("Bestill pizza slutt")
@@ -171,15 +172,12 @@ class MyActionsApp : DialogflowApp() {
         val order: Order = orderManager[request]
 
         val ingredient = request.getParameter("Ingredient") as List<String>
-        val pizzaList = pizzaMenu.pizzaList.filter { pizza -> pizza.ingredients.containsAll(ingredient) }
+        val pizzaList = pizzaMenu.pizzaList.filter { pizza -> pizza.ingredients.containsAll(ingredient) }.map{p -> p.name}
 
 
         if(pizzaList.isNotEmpty()){
-            var s = "Her er en liste av pizzaer som du kanskje er interessert i: "
-            for(i in pizzaList){
-                s += "$i, "
-            }
-            responseBuilder.add(s)
+            responseBuilder.add("Her er noen pizzaer du kan like " +
+                    spokenList(pizzaList))
         }else{
             responseBuilder.add("Den valgte ingrediensen finnes ikke")
         }
