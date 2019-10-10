@@ -20,7 +20,6 @@ import com.google.actions.api.ActionRequest
 import com.google.actions.api.ActionResponse
 import com.google.actions.api.DialogflowApp
 import com.google.actions.api.ForIntent
-import com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER
 import org.slf4j.LoggerFactory
 import java.util.*
 
