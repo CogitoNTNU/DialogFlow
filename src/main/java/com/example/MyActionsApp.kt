@@ -179,10 +179,14 @@ class MyActionsApp : DialogflowApp() {
 
 
         if(pizzaList.isNotEmpty()){
-            var s = "Here is a list of pizzas you might found interesting: "
+            val s = "Here is a list of pizzas you might found interesting: "
+            /*
             for(i in pizzaList){
+
                 s += "$i, "
             }
+
+             */
             responseBuilder.add(s)
         }else{
             responseBuilder.add("The choosen ingredient doesnt exist")
