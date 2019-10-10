@@ -39,9 +39,9 @@ class MyActionsApp : DialogflowApp() {
         val user = request.user
         val order: Order = orderManager[request]
 
-        var types = (request.getParameter("Type") as List<String>).map({it.toInt()})
+        var types = (request.getParameter("Type") as List<String>).map { it.toFloat().toInt() }
         var amount = (request.getParameter("Amount") as List<Any>?)
-                ?.map { if (it is Int) it else it.toString().toInt() }
+                ?.map { if (it is Int) it else it.toString().toFloat().toInt() }
                 ?: emptyList()
 
         if(amount.size != types.size){
