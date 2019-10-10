@@ -172,16 +172,12 @@ class MyActionsApp : DialogflowApp() {
         val order: Order = orderManager[request]
 
         val ingredient = request.getParameter("Ingredient") as List<String>
-        val pizzaList = pizzaMenu.pizzaList.filter { pizza -> pizza.ingredients.containsAll(ingredient) }
+        val pizzaList = pizzaMenu.pizzaList.filter { pizza -> pizza.ingredients.containsAll(ingredient) }.map{p -> p.name}
 
 
         if(pizzaList.isNotEmpty()){
-            var s = "Here is a list of pizzas you might found interesting: "
-            for(i in pizzaList){
-
-                s += "$i, "
-            }
-            responseBuilder.add(s)
+            responseBuilder.add("Her er noen pizzaer du kan like " +
+                    spokenList(pizzaList))
         }else{
             responseBuilder.add("The choosen ingredient doesnt exist")
         }
