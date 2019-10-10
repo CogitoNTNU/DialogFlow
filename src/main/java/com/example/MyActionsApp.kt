@@ -41,14 +41,43 @@ class MyActionsApp : DialogflowApp() {
 
         val order: Order = orderManager[request]
 
-        val type = request.getParameter("Type").toString().toInt()
+        var types = request.getParameter("Type") as List<Int>
+        var amount = request.getParameter("Type") as List<Int>
 
-        var pizza = pizzaMenu.getPizza(type)
-        if (pizza != null) {
-            order.addPizza(pizza)
-            responseBuilder.add("Klart det! En ${pizza?.name}")
-        } else {
-            // pizza finnes ikke
+        if(amount.isEmpty() && types.size == 1){
+            amount = mutableListOf()
+            for (i in 0..types.size){
+                amount.add(1)
+            }
+        }
+
+        var pizzas: MutableList<Pizza> = mutableListOf()
+        for (i in 0..types.size) {
+            var type = types[i]
+            for (j in 0..amount[i]) {
+                var pizza = pizzaMenu.getPizza(type)
+                if(pizza != null){
+                    pizzas.add(pizza)
+                }
+            }
+        }
+
+        if(pizzas.size > 0){
+            order.addPizza(pizzas)
+            var response = "Du har bestillt "
+
+            for (i in 0..pizzas.size) {
+                var pizza = pizzas[i]
+                var number = amount[i]
+
+                response += number.toString() +" "+ pizza.name
+                if(i != (pizzas.size-1)){
+                    response += " og "
+                }
+            }
+            responseBuilder.add("Klart det!" + response)
+        }
+        else {
             responseBuilder.add("Ukjent pizza, vil du ha noen anbefalinger?")
         }
 
