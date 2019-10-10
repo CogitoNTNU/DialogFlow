@@ -46,11 +46,11 @@ class MyActionsApp : DialogflowApp() {
         var pizza = pizzaMenu.getPizza(type)
         if (pizza != null) {
             order.addPizza(pizza)
+            responseBuilder.add("Klart det! En ${pizza?.name}")
         } else {
             // pizza finnes ikke
+            responseBuilder.add("Ukjent pizza, vil du ha noen anbefalinger?")
         }
-
-        responseBuilder.add("Klart det! En ${pizza?.name}")
 
         orderManager[request] = order
         LOGGER.info("Bestill pizza slutt")
