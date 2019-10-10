@@ -121,10 +121,10 @@ class MyActionsApp : DialogflowApp() {
             order.changePizza(order.pizzas.last(), rm_i, emptyList())
 
             responseBuilder.add("Removed ${spokenList(rm_i)}, to the ${order.pizzas.last().name}\n" +
-                    "The last pizza in your order now contains the ingredients:\n" +
+                    "Den siste pizzaen i ordren din inneholder nå:\n" +
                     "${spokenList(order.pizzas.last().ingredients)}")
         }else{
-            responseBuilder.add("F*CK of u cunt, trying to remove ingredients from pizza u have not orderd")
+            responseBuilder.add("Du har ikke bestilt denne pizzaen")
         }
         LOGGER.info("Fjern ingredients slutt")
 
@@ -149,10 +149,10 @@ class MyActionsApp : DialogflowApp() {
             order.changePizza(order.pizzas.last(), emptyList(), add_i)
 
             responseBuilder.add("Added ${spokenList(add_i)}, to the ${order.pizzas.last().name}\n"  +
-                    "\nThe last pizza in your order now contains the ingredients:\n" +
+                    "\nDen siste pizzaen i ordren din inneholder nå:\n" +
                     spokenList(order.pizzas.last().ingredients))
         }else{
-            responseBuilder.add("F*CK of u cunt, trying to add ingredients from pizza u have not orderd")
+            responseBuilder.add("Du har ikke bestilt denne pizzaen")
         }
         LOGGER.info("Legg til ingredients slutt")
 
@@ -175,13 +175,13 @@ class MyActionsApp : DialogflowApp() {
 
 
         if(pizzaList.isNotEmpty()){
-            var s = "Here is a list of pizzas you might found interesting: "
+            var s = "Her er en liste av pizzaer som du kanskje er interessert i: "
             for(i in pizzaList){
                 s += "$i, "
             }
             responseBuilder.add(s)
         }else{
-            responseBuilder.add("The choosen ingredient doesnt exist")
+            responseBuilder.add("Den valgte ingrediensen finnes ikke")
         }
 
         LOGGER.info("Finn pizza slutt")
