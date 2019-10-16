@@ -35,7 +35,7 @@ class MyActionsApp : DialogflowApp() {
 
     private fun completeIntent(
             request: ActionRequest,
-            order: Order,
+            order: Order = orderManager[request],
             responseBuilder: ResponseBuilder
     ): ActionResponse {
         // if (askForMore) responseBuilder.add("Skal det være noe mer?")
@@ -112,6 +112,27 @@ class MyActionsApp : DialogflowApp() {
         responseBuilder.add(outString.toString())
 
         return completeIntent(request, order, responseBuilder)
+    }
+
+    @ForIntent("Pizza ingredient listing")
+    fun listIngredients(request: ActionRequest): ActionResponse {
+        val responseBuilder = getResponseBuilder(request)
+        val type = request.getParameter("Type").let {
+            when (it) {
+                is String -> it.toInt()
+                is Int -> it
+                is Float -> it.toInt()
+                is Double -> it.toInt()
+                else -> -1
+            }
+        }
+        val pizza = pizzaMenu.getPizza(type)
+        if (pizza != null) {
+            responseBuilder.add("På ${pizza.name} er det ${spokenList(pizza.ingredients)}")
+        } else {
+            responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hva vil du ha på pizzaen din?")
+        }
+        return completeIntent(request = request, responseBuilder = responseBuilder)
     }
 
     @ForIntent("Fjern ingredients intent")
