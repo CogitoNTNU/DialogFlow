@@ -121,7 +121,7 @@ class MyActionsApp : DialogflowApp() {
 
             order.changePizza(order.pizzas.last(), rm_i, emptyList())
 
-            responseBuilder.add("Removed ${spokenList(rm_i)}, to the ${order.pizzas.last().name}\n" +
+            responseBuilder.add("Fjernet ${spokenList(rm_i)}, fra ${order.pizzas.last().name}\n" +
                     "Den siste pizzaen i ordren din inneholder nå:\n" +
                     "${spokenList(order.pizzas.last().ingredients)}")
         }else{
@@ -149,7 +149,7 @@ class MyActionsApp : DialogflowApp() {
 
             order.changePizza(order.pizzas.last(), emptyList(), add_i)
 
-            responseBuilder.add("Added ${spokenList(add_i)}, to the ${order.pizzas.last().name}\n"  +
+            responseBuilder.add("La til ${spokenList(add_i)}, til ${order.pizzas.last().name}\n"  +
                     "\nDen siste pizzaen i ordren din inneholder nå:\n" +
                     spokenList(order.pizzas.last().ingredients))
         }else{
