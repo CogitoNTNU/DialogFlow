@@ -286,7 +286,7 @@ class MyActionsApp : DialogflowApp() {
         else {
             responseBuilder.add("Du har ikke bestilt noen pizzaer enda.")
         }
-        return responseBuilder.build()
+        return completeIntent(request,order, responseBuilder)
     }
 
     @ForIntent("bye")
