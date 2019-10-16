@@ -102,9 +102,11 @@ class MyActionsApp : DialogflowApp() {
         val outString = StringBuilder("Du har bestilt ${order.pizzas.size} pizza")
         if (order.pizzas.size != 1) outString.append("er")
         outString.append(". ")
-        val spokenPizzas = order.pizzas.map { pizza ->
-            "En nr. ${pizza.nr} ${pizza.name}, med ${spokenList(pizza.ingredients)}"
-        }
+        val spokenPizzas = order.pizzas
+                .groupBy { it }
+                .map { (pizza, amounts) ->
+                    "${amounts.size} nr. ${pizza.nr} ${pizza.describeChangesToUser()}"
+                }
         outString.append(spokenList(spokenPizzas))
 
         responseBuilder.add(outString.toString())
@@ -203,12 +205,11 @@ class MyActionsApp : DialogflowApp() {
 
         var delivery = request.getParameter("Deliver") as String
 
-        if(delivery == "deliver")
-        {
+        if (delivery == "deliver") {
             order.deliver(true)
             var address = request.getParameter("Address") as String
             order.addAddress(address)
-            responseBuilder.add("Pizzaen vil bli levert til "+ address)
+            responseBuilder.add("Pizzaen vil bli levert til $address")
         } else {
             order.deliver(false)
             responseBuilder.add("Pizzaen kan hentes oss hos") // butikk adresse?
@@ -248,9 +249,9 @@ class MyActionsApp : DialogflowApp() {
 
         val order: Order = orderManager[request]
 
-        for(pizza : Pizza in order.pizzas) {
-            for (i in 0 until types.size) {
-                if ( pizza.name.equals(types[i]) || pizza.nr.equals(types[i])) {
+        for (pizza: Pizza in order.pizzas) {
+            for (i in types.indices) {
+                if (pizza.name.equals(types[i]) || pizza.nr.equals(types[i])) {
                     for (j in 0 until amount[i]) {
                         order.removePizza(pizza)
                     }
