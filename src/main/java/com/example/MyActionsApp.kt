@@ -270,15 +270,21 @@ class MyActionsApp : DialogflowApp() {
 
         val order: Order = orderManager[request]
 
-        for (pizza: Pizza in order.pizzas) {
-            for (i in types.indices) {
-                if (pizza.name.equals(types[i]) || pizza.nr.equals(types[i])) {
-                    for (j in 0 until amount[i]) {
-                        order.removePizza(pizza)
+        if (order.pizzas.size > 0) {
+
+            for (pizza: Pizza in order.pizzas) {
+                for (i in types.indices) {
+                    if (pizza.nr == types[i]) {
+                        for (j in 0 until amount[i]) {
+                            order.removePizza(pizza)
+                        }
+                        responseBuilder.add("Fjernet" + amount[i] + pizza)
                     }
-                    responseBuilder.add("Fjernet" + amount[i] + pizza)
                 }
             }
+        }
+        else {
+            responseBuilder.add("Du har ikke bestilt noen pizzaer enda.")
         }
         return responseBuilder.build()
     }
