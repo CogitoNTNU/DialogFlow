@@ -36,10 +36,9 @@ class MyActionsApp : DialogflowApp() {
     private fun completeIntent(
             request: ActionRequest,
             order: Order,
-            responseBuilder: ResponseBuilder,
-            askForMore: Boolean = order.pizzas.isNotEmpty()
+            responseBuilder: ResponseBuilder
     ): ActionResponse {
-        if (askForMore) responseBuilder.add("Skal det være noe mer?")
+        // if (askForMore) responseBuilder.add("Skal det være noe mer?")
         orderManager[request] = order
         return responseBuilder.build()
     }
@@ -78,16 +77,12 @@ class MyActionsApp : DialogflowApp() {
 
         if (pizzas.size > 0) {
             order.addPizza(pizzas)
-            var response = "Du har bestilt "
-            for (i in pizzas.distinct().indices) {
-                var pizza = pizzas.distinct()[i]
-                var number = amount[i]
-                response += number.toString() + " " + pizza.name
-                if (i != (pizzas.size - 1)) {
-                    response += " og "
-                }
-            }
-            responseBuilder.add("Klart det! $response")
+            val speakList = pizzas
+                    .groupBy { it }
+                    .map { (pizza, amount) ->
+                        "${amount.size} ${pizza.describeChangesToUser()}"
+                    }
+            responseBuilder.add("Klart det! Du har bestilt ${spokenList(speakList)}")
         } else {
             responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?")
         }
@@ -130,12 +125,12 @@ class MyActionsApp : DialogflowApp() {
 
             //val rm_i = request.getParameter("rm_i") as List<String>
             val rm_i = request.getParameter("rm_i") as List<String>
+            val lastPizza = order.pizzas.last()
 
-            order.changePizza(order.pizzas.last(), rm_i, emptyList())
+            order.changePizza(lastPizza, rm_i, emptyList())
 
-            responseBuilder.add("Fjernet ${spokenList(rm_i)}, fra ${order.pizzas.last().name}\n" +
-                    "Den siste pizzaen i ordren din inneholder nå:\n" +
-                    spokenList(order.pizzas.last().ingredients))
+            responseBuilder.add("Fjernet ${spokenList(rm_i)}, fra ${lastPizza.name}\n" +
+                    "Den siste pizzaen i ordren din er nå en ${lastPizza.describeChangesToUser()}")
         } else {
             responseBuilder.add("Du har ikke bestilt denne pizzaen")
         }
@@ -158,11 +153,10 @@ class MyActionsApp : DialogflowApp() {
             //val rm_i = request.getParameter("rm_i") as List<String>
             val add_i = request.getParameter("add_i") as List<String>
 
-            order.changePizza(order.pizzas.last(), emptyList(), add_i)
+            val lastPizza = order.pizzas.last()
+            order.changePizza(lastPizza, emptyList(), add_i)
 
-            responseBuilder.add("La til ${spokenList(add_i)}, til ${order.pizzas.last().name}\n" +
-                    "\nDen siste pizzaen i ordren din inneholder nå:\n" +
-                    spokenList(order.pizzas.last().ingredients))
+            responseBuilder.add("La til ${spokenList(add_i)}. Siste pizza i bestillingen er nå en ${lastPizza.describeChangesToUser()}")
         } else {
             responseBuilder.add("Du har ikke bestilt denne pizzaen")
         }
@@ -195,7 +189,7 @@ class MyActionsApp : DialogflowApp() {
 
         LOGGER.info("Finn pizza slutt")
 
-        return completeIntent(request, order, responseBuilder, false)
+        return completeIntent(request, order, responseBuilder)
     }
 
     @ForIntent("Leveranse")
@@ -220,7 +214,7 @@ class MyActionsApp : DialogflowApp() {
             responseBuilder.add("Pizzaen kan hentes oss hos") // butikk adresse?
         }
 
-        return completeIntent(request, order, responseBuilder, false)
+        return completeIntent(request, order, responseBuilder)
     }
 
     @ForIntent("Default Welcome Intent")

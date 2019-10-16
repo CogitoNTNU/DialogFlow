@@ -4,10 +4,29 @@ import com.beust.klaxon.Klaxon
 import java.io.File
 
 
-data class Pizza(val nr: Int, val name: String, var ingredients: Set<String>, val price: List<Int>) {
+data class Pizza(
+        val nr: Int,
+        val name: String,
+        val originalIngredients: Set<String>,
+        val price: List<Int>,
+        private var additions: Set<String> = emptySet(),
+        private var removals: Set<String> = emptySet()
+) {
+    val ingredients: Set<String> = originalIngredients - removals + additions
+
     fun change(remove: List<String>, add: List<String>) {
-        ingredients = ingredients - remove.toSet()
-        ingredients = ingredients + add.toSet()
+        additions += add
+        removals += remove
+        additions -= remove
+        removals -= add
+    }
+
+    fun describeChangesToUser(): String {
+        val output = StringBuilder(name)
+        if (additions.isNotEmpty()) output.append(" med ekstra ").append(spokenList(additions))
+        if (additions.isNotEmpty() && removals.isNotEmpty()) output.append(", og ")
+        if (removals.isNotEmpty()) output.append(" uten ").append(spokenList(removals))
+        return output.toString()
     }
 }
 
