@@ -206,6 +206,33 @@ class MyActionsApp : DialogflowApp() {
         return responseBuilder.build()
     }
 
+    @ForIntent("Fjern pizza")
+    fun removePizza(request: ActionRequest): ActionResponse {
+
+        LOGGER.info("Starter fjerning av pizza")
+
+        val responseBuilder = getResponseBuilder(request)
+
+        var types = (request.getParameter("Type") as List<String>).map { it.toFloat().toInt() }
+        var amount = (request.getParameter("Amount") as List<Any>?)
+                ?.map { if (it is Int) it else it.toString().toFloat().toInt() }
+                ?: emptyList()
+
+        val order: Order = orderManager[request]
+
+        for(pizza : Pizza in order.pizzas) {
+            for (i in 0 until types.size) {
+                if ( pizza.name.equals(types[i]) || pizza.nr.equals(types[i])) {
+                    for (j in 0 until amount[i]) {
+                        order.removePizza(pizza)
+                    }
+                    responseBuilder.add("Fjernet" + amount[i] + pizza)
+                }
+            }
+        }
+        return responseBuilder.build()
+    }
+
     @ForIntent("bye")
     fun bye(request: ActionRequest): ActionResponse {
         LOGGER.info("Bye intent start.")
