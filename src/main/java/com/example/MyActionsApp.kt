@@ -87,11 +87,9 @@ class MyActionsApp : DialogflowApp() {
                     response += " og "
                 }
             }
-            responseBuilder.add("Klart det! ")
-            responseBuilder.add(response)
+            responseBuilder.add("Klart det! $response")
         } else {
-            responseBuilder.add("Den pizzaen har jeg ikke hørt om.")
-            responseBuilder.add("Hvilke ingredienser vil du ha på pizzaen din?")
+            responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?")
         }
         LOGGER.info(responseBuilder.toString())
 
@@ -189,10 +187,10 @@ class MyActionsApp : DialogflowApp() {
                 .map { p -> p.name }
 
         if (pizzaList.isNotEmpty()) {
-            responseBuilder.add("Her er noen pizzaer du kan like " +
+            responseBuilder.add("Her er noen pizzaer du kanskje liker: " +
                     spokenList(pizzaList))
         } else {
-            responseBuilder.add("Den valgte ingrediensen finnes ikke")
+            responseBuilder.add("Beklager, vi har ingen pizzaer med dette på. Vil du ha noe annet?")
         }
 
         LOGGER.info("Finn pizza slutt")

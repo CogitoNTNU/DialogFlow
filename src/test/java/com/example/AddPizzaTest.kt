@@ -32,7 +32,7 @@ class AddPizzaTest {
         val responseJson = JSONObject(future.get())
         val textToSpeech = extractTextToSpeech(responseJson)
 
-        assert("Kokkens favoritt" in textToSpeech)
+        assert("Kokkens favoritt" in textToSpeech) { textToSpeech }
     }
 
     @Test
