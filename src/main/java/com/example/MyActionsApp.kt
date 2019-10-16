@@ -20,6 +20,7 @@ import com.google.actions.api.ActionRequest
 import com.google.actions.api.ActionResponse
 import com.google.actions.api.DialogflowApp
 import com.google.actions.api.ForIntent
+import com.google.actions.api.response.ResponseBuilder
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -31,6 +32,17 @@ class MyActionsApp : DialogflowApp() {
     val orderManager = OrderManager()
 
     val pizzaMenu = getPizzaMenu()
+
+    private fun completeIntent(
+            request: ActionRequest,
+            order: Order,
+            responseBuilder: ResponseBuilder,
+            askForMore: Boolean = order.pizzas.isNotEmpty()
+    ): ActionResponse {
+        if (askForMore) responseBuilder.add("Skal det være noe mer?")
+        orderManager[request] = order
+        return responseBuilder.build()
+    }
 
     @ForIntent("Legg til pizza intent")
     fun bestill(request: ActionRequest): ActionResponse {
@@ -44,47 +56,47 @@ class MyActionsApp : DialogflowApp() {
                 ?.map { if (it is Int) it else it.toString().toFloat().toInt() }
                 ?: emptyList()
 
-        if(amount.size != types.size){
+        if (amount.size != types.size) {
             amount = mutableListOf()
-            for (i in amount.size until types.size){
+            for (i in amount.size until types.size) {
                 amount.add(1)
             }
         }
 
         var pizzas: MutableList<Pizza> = mutableListOf()
         var counter = 0
-        for (i in 0 until types.size) {
+        for (i in types.indices) {
             var type = types[i]
             for (j in 0 until amount[i]) {
                 var pizza = pizzaMenu.getPizza(type)
-                if(pizza != null){
+                if (pizza != null) {
                     counter++
                     pizzas.add(pizza)
                 }
             }
         }
 
-        if(pizzas.size > 0){
+        if (pizzas.size > 0) {
             order.addPizza(pizzas)
-            var response = "Du har bestillt "
-            for (i in 0 until pizzas.distinct().size) {
+            var response = "Du har bestilt "
+            for (i in pizzas.distinct().indices) {
                 var pizza = pizzas.distinct()[i]
                 var number = amount[i]
-                response += number.toString() +" "+ pizza.name
-                if(i != (pizzas.size-1)){
+                response += number.toString() + " " + pizza.name
+                if (i != (pizzas.size - 1)) {
                     response += " og "
                 }
             }
-            responseBuilder.add("Klart det! " + response)
-        }
-        else {
-            responseBuilder.add("Ukjent pizza, vil du ha noen anbefalinger?")
+            responseBuilder.add("Klart det! $response")
+        } else {
+            responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?")
         }
         LOGGER.info(responseBuilder.toString())
 
         orderManager[request] = order
         LOGGER.info("Bestill pizza slutt")
-        return responseBuilder.build()
+
+        return completeIntent(request, order, responseBuilder)
     }
 
     @ForIntent("List bestilling")
@@ -102,7 +114,7 @@ class MyActionsApp : DialogflowApp() {
 
         responseBuilder.add(outString.toString())
 
-        return responseBuilder.build()
+        return completeIntent(request, order, responseBuilder)
     }
 
     @ForIntent("Fjern ingredients intent")
@@ -114,7 +126,7 @@ class MyActionsApp : DialogflowApp() {
 
         val order: Order = orderManager[request]
 
-        if(order.pizzas.size > 0) {
+        if (order.pizzas.size > 0) {
 
             //val rm_i = request.getParameter("rm_i") as List<String>
             val rm_i = request.getParameter("rm_i") as List<String>
@@ -123,14 +135,13 @@ class MyActionsApp : DialogflowApp() {
 
             responseBuilder.add("Fjernet ${spokenList(rm_i)}, fra ${order.pizzas.last().name}\n" +
                     "Den siste pizzaen i ordren din inneholder nå:\n" +
-                    "${spokenList(order.pizzas.last().ingredients)}")
-        }else{
+                    spokenList(order.pizzas.last().ingredients))
+        } else {
             responseBuilder.add("Du har ikke bestilt denne pizzaen")
         }
         LOGGER.info("Fjern ingredients slutt")
 
-        orderManager[request] = order
-        return responseBuilder.build()
+        return completeIntent(request, order, responseBuilder)
     }
 
     @ForIntent("Legg til ingredients intent")
@@ -142,25 +153,23 @@ class MyActionsApp : DialogflowApp() {
 
         val order: Order = orderManager[request]
 
-        if(order.pizzas.size > 0) {
+        if (order.pizzas.size > 0) {
 
             //val rm_i = request.getParameter("rm_i") as List<String>
             val add_i = request.getParameter("add_i") as List<String>
 
             order.changePizza(order.pizzas.last(), emptyList(), add_i)
 
-            responseBuilder.add("La til ${spokenList(add_i)}, til ${order.pizzas.last().name}\n"  +
+            responseBuilder.add("La til ${spokenList(add_i)}, til ${order.pizzas.last().name}\n" +
                     "\nDen siste pizzaen i ordren din inneholder nå:\n" +
                     spokenList(order.pizzas.last().ingredients))
-        }else{
+        } else {
             responseBuilder.add("Du har ikke bestilt denne pizzaen")
         }
         LOGGER.info("Legg til ingredients slutt")
 
-        orderManager[request] = order
-        return responseBuilder.build()
+        return completeIntent(request, order, responseBuilder)
     }
-
 
     @ForIntent("Finn pizza intent")
     fun findPizza(request: ActionRequest): ActionResponse {
@@ -171,23 +180,48 @@ class MyActionsApp : DialogflowApp() {
 
         val order: Order = orderManager[request]
 
-        val ingredient = request.getParameter("Ingredient") as List<String>
-        val pizzaList = pizzaMenu.pizzaList.filter { pizza -> pizza.ingredients.containsAll(ingredient) }.map{p -> p.name}
+        val requrestedIngredients = request.getParameter("Ingredient") as List<String>
+        val pizzaList = pizzaMenu.pizzaList
+                .sortedByDescending { pizza -> pizza.ingredients.count { it in requrestedIngredients } }
+                .take(3)
+                .map { p -> p.name }
 
-
-        if(pizzaList.isNotEmpty()){
-            responseBuilder.add("Her er noen pizzaer du kan like " +
+        if (pizzaList.isNotEmpty()) {
+            responseBuilder.add("Her er noen pizzaer du kanskje liker: " +
                     spokenList(pizzaList))
-        }else{
-            responseBuilder.add("Den valgte ingrediensen finnes ikke")
+        } else {
+            responseBuilder.add("Beklager, vi har ingen pizzaer med dette på. Vil du ha noe annet?")
         }
 
         LOGGER.info("Finn pizza slutt")
 
-        orderManager[request] = order
-        return responseBuilder.build()
+        return completeIntent(request, order, responseBuilder, false)
     }
 
+    @ForIntent("Leveranse")
+    fun delivery(request: ActionRequest): ActionResponse {
+        LOGGER.info("Leveranse start")
+        val responseBuilder = getResponseBuilder(request)
+        val rb = ResourceBundle.getBundle("resources")
+        val user = request.user
+
+        val order: Order = orderManager[request]
+
+        var delivery = request.getParameter("Deliver") as String
+
+        if(delivery == "deliver")
+        {
+            order.deliver(true)
+            var address = request.getParameter("Address") as String
+            order.addAddress(address)
+            responseBuilder.add("Pizzaen vil bli levert til "+ address)
+        } else {
+            order.deliver(false)
+            responseBuilder.add("Pizzaen kan hentes oss hos") // butikk adresse?
+        }
+
+        return completeIntent(request, order, responseBuilder, false)
+    }
 
     @ForIntent("Default Welcome Intent")
     fun welcome(request: ActionRequest): ActionResponse {

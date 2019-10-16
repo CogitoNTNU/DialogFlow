@@ -8,7 +8,9 @@ data class Extra(val name: String, val price: Double)
 data class Order(var pizzas: MutableList<Pizza> = mutableListOf(),
                  var extras: MutableList<Extra> = mutableListOf(),
                  var name: String = "",
-                 var phone: String = "") {
+                 var phone: String = "",
+                 var delivery: Boolean = false,
+                 var address: String = "") {
 
     fun addPizza(pizza: Pizza) = pizzas.add(pizza)
 
@@ -25,6 +27,10 @@ data class Order(var pizzas: MutableList<Pizza> = mutableListOf(),
     fun removeExtras(item: Extra) = extras.remove(item)
 
     fun removeExtras(itemName: String) = extras.removeIf { it.name == itemName }
+
+    fun deliver(status: Boolean) {delivery = status}
+
+    fun addAddress(address_: String) {address = address_}
 
     fun toJson(): String = Klaxon().toJsonString(this)
     fun toMap(): Map<String, Any> = mapOf("order" to toJson())
