@@ -19,9 +19,10 @@ fun extractTextToSpeech(responseJson: JSONObject): String {
             .getJSONArray("items")
     val list = List(array.length()) { i ->
         array
-                .getJSONObject(i)
-                .getJSONObject("simpleResponse")
-                .getString("textToSpeech")
+                .optJSONObject(i)
+                ?.optJSONObject("simpleResponse")
+                ?.optString("textToSpeech")
+                ?: ""
     }
     return list.joinToString(".")
 }
