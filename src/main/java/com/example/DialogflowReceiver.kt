@@ -30,7 +30,7 @@ import java.util.*
  */
 class DialogflowReceiver : DialogflowApp() {
     val orderManager = OrderManager()
-
+    val actionHandler = ActionHandler();
     val pizzaMenu = getPizzaMenu()
 
     private fun completeIntent(
@@ -221,20 +221,10 @@ class DialogflowReceiver : DialogflowApp() {
         val responseBuilder = getResponseBuilder(request)
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
-
         val order: Order = orderManager[request]
         val delivery = request.getParameter("Deliver") as String
 
-        if (delivery == "deliver") {
-            order.deliver(true)
-            var address = request.getParameter("Address") as String
-            order.addAddress(address)
-            responseBuilder.add("Pizzaen vil bli levert til $address")
-        } else {
-            order.deliver(false)
-            responseBuilder.add("Pizzaen kan hentes oss hos") // butikk adresse?
-        }
-        responseBuilder.add(delivery)
+
 
         return completeIntent(request, order, responseBuilder)
     }
