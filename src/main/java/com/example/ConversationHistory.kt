@@ -2,10 +2,6 @@ package com.example
 
 import java.util.function.Predicate
 
-enum class Question {
-    // TODO does this make sense?
-}
-
 interface ConversationHistory {
     fun <T : Any> findCurrentEntity(): T
     fun <T : Any> findEntity(predicate: Predicate<T>): T
