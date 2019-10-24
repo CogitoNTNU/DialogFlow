@@ -180,7 +180,13 @@ class DialogflowCommunicator : DialogflowApp() {
         val order: Order = orderManager[request]
         val requestedIngredients = request.getParameter("Ingredient") as List<String>
 
-        responseBuilder.add(actionHandler.findPizza(requestedIngredients, pizzaMenu))
+        val pizzaList = actionHandler.findPizza(requestedIngredients, pizzaMenu)
+
+        responseBuilder.add(if (pizzaList.isNotEmpty()) {
+            "Hva med " + spokenList(pizzaList.map { it.name })
+        } else {
+            "Beklager, vi har ingen pizzaer med dette på. Vil du ha noe annet?"
+        })
 
         LOGGER.info("Finn pizza slutt")
 

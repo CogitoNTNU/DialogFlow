@@ -29,21 +29,10 @@ class ActionHandler {
     }
 
 
-    fun findPizza(requrestedIngredients: List<String>, pizzaMenu: PizzaMenu): String {
-        var response = ""
-
-        val pizzaList = pizzaMenu.pizzaList
-                .sortedByDescending { pizza -> pizza.ingredients.count { it in requrestedIngredients } }
+    fun findPizza(requestedIngredients: List<String>, pizzaMenu: PizzaMenu): List<Pizza> {
+        return pizzaMenu.pizzaList
+                .sortedByDescending { pizza -> pizza.ingredients.count { it in requestedIngredients } }
                 .take(3)
-                .map { p -> p.name }
-
-        response += if (pizzaList.isNotEmpty()) {
-            "Hva med " + spokenList(pizzaList)
-        } else {
-            "Beklager, vi har ingen pizzaer med dette på. Vil du ha noe annet?"
-        }
-
-        return response
     }
 
 
