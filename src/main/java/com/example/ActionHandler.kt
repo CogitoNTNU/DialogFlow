@@ -23,11 +23,7 @@ class ActionHandler {
 
 
 
-    fun removePizza(types : IntArray, amount : IntArray): String {
-
-        var response  = ""
-
-        val order: Order = orderManager[request]
+    fun removePizza(order : Order,types : List<Int>, amount : List<Int>): Boolean {
 
         if (order.pizzas.size > 0) {
             for (pizza: Pizza in order.pizzas) {
@@ -36,15 +32,14 @@ class ActionHandler {
                         for (j in 0 until amount[i]) {
                             order.removePizza(pizza)
                         }
-                        response += "Fjernet" + amount[i] + pizza.name
                     }
                 }
             }
         }
         else {
-            response = "Du har ikke bestilt noen pizzaer enda."
+            return false
         }
-        return response
+        return true
     }
 
 }
