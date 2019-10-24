@@ -144,21 +144,16 @@ class DialogflowCommunicator : DialogflowApp() {
     fun addIngredient(request: ActionRequest): ActionResponse {
         LOGGER.info("Legg til ingredients start")
         val responseBuilder = getResponseBuilder(request)
-        val rb = ResourceBundle.getBundle("resources")
-        val user = request.user
 
         val order: Order = orderManager[request]
 
-        if (order.pizzas.size > 0) {
+        val add_i = request.getParameter("add_i") as List<String>
 
-            //val rm_i = request.getParameter("rm_i") as List<String>
-            val add_i = request.getParameter("add_i") as List<String>
-
-            val lastPizza = order.pizzas.last()
-            order.changePizza(lastPizza, emptyList(), add_i)
-
-            responseBuilder.add("La til ${spokenList(add_i)}. Siste pizza i bestillingen er nå en ${lastPizza.describeChangesToUser()}")
-        } else {
+        if (actionHandler.addIngredient(order, add_i)) {
+            responseBuilder.add("La til ${spokenList(add_i)}. Siste pizza i bestillingen er nå en " +
+                    "${order.pizzas.last().describeChangesToUser()}")
+        }
+        else {
             responseBuilder.add("Du har ikke bestilt denne pizzaen")
         }
         LOGGER.info("Legg til ingredients slutt")
@@ -233,7 +228,7 @@ class DialogflowCommunicator : DialogflowApp() {
 
         if(actionHandler.removePizza(order, types, amount)) {
             for (i in types.indices) {
-                responseBuilder.add("Fjernet" + amount[i] + getPizzaMenu().getPizza(types[i]))
+                responseBuilder.add("Fjernet " + amount[i] + getPizzaMenu().getPizza(types[i]))
             }
         }
         else {

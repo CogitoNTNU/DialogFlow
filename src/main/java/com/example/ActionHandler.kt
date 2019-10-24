@@ -84,4 +84,16 @@ class ActionHandler {
         return true
     }
 
+
+    fun addIngredient(order : Order, addedIngredients : List<String>): Boolean {
+
+        if(order.pizzas.size > 0) {
+            order.changePizza(order.pizzas.last(), emptyList(), addedIngredients)
+        }
+        else {
+            return false
+        }
+        return true
+    }
+
 }
