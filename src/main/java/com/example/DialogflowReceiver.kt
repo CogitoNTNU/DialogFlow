@@ -225,7 +225,14 @@ class DialogflowReceiver : DialogflowApp() {
         val delivery = request.getParameter("Deliver") as String
         var address = request.getParameter("Address") as String
 
-        responseBuilder.add(actionHandler.delivery(order, delivery, address))
+        actionHandler.delivery(order, delivery, address)
+        if(order.delivery == true){
+            responseBuilder.add("Pizzaen vil bli levert til $address")
+        } else {
+            responseBuilder.add("Pizzan kan hentes hos oss")
+        }
+        responseBuilder.add( " " + delivery)
+
 
         return completeIntent(request, order, responseBuilder)
     }
