@@ -1,24 +1,27 @@
 package com.example
 
+import com.google.actions.api.ActionRequest
+import java.util.*
+
 class ActionHandler {
 
     val orderManager = OrderManager()
 
-    fun delivery(order: Order, method: String, address: String): String {
-        var response = ""
+    fun delivery(request: ActionRequest){
 
-        if (method == "deliver") {
+        val rb = ResourceBundle.getBundle("resources")
+        val user = request.user
+        val order: Order = orderManager[request]
+        val delivery = request.getParameter("Deliver") as String
+        var address = request.getParameter("Address") as String
+
+        if (delivery == "deliver") {
             order.deliver(true)
-
             order.addAddress(address)
-            response += "Pizzaen vil bli levert til $address"
         } else {
             order.deliver(false)
-            response += "Pizzaen kan hentes oss hos" // butikk adresse?
         }
-        response += " "+ method
-
-        return response
+        return
     }
 
 

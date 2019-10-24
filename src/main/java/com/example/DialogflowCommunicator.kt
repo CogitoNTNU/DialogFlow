@@ -28,7 +28,7 @@ import java.util.*
  * Implements all intent handlers for this Action. Note that your App must extend from DialogflowApp
  * if using Dialogflow or ActionsSdkApp for ActionsSDK based Actions.
  */
-class DialogflowReceiver : DialogflowApp() {
+class DialogflowCommunicator : DialogflowApp() {
     val orderManager = OrderManager()
     val actionHandler = ActionHandler();
     val pizzaMenu = getPizzaMenu()
@@ -219,13 +219,16 @@ class DialogflowReceiver : DialogflowApp() {
     fun delivery(request: ActionRequest): ActionResponse {
         LOGGER.info("Leveranse start")
         val responseBuilder = getResponseBuilder(request)
-        val rb = ResourceBundle.getBundle("resources")
-        val user = request.user
         val order: Order = orderManager[request]
-        val delivery = request.getParameter("Deliver") as String
-        var address = request.getParameter("Address") as String
+        val delivery = actionHandler.delivery(request)
 
-        responseBuilder.add(actionHandler.delivery(order, delivery, address))
+        if(order.delivery == true){
+            responseBuilder.add("Pizzaen vil bli levert til ${order.address}")
+        } else {
+            responseBuilder.add("Pizzan kan hentes hos oss")
+        }
+        responseBuilder.add(" $delivery")
+
 
         return completeIntent(request, order, responseBuilder)
     }
@@ -285,6 +288,6 @@ class DialogflowReceiver : DialogflowApp() {
 
     companion object {
 
-        private val LOGGER = LoggerFactory.getLogger(DialogflowReceiver::class.java)
+        private val LOGGER = LoggerFactory.getLogger(DialogflowCommunicator::class.java)
     }
 }
