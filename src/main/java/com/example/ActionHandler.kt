@@ -5,7 +5,6 @@ class ActionHandler {
     val orderManager = OrderManager()
 
     fun delivery(order: Order, method: String, address: String){
-l
         if (method == "deliver") {
             order.deliver(true)
             order.addAddress(address)
