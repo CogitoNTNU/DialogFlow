@@ -127,8 +127,6 @@ class DialogflowCommunicator : DialogflowApp() {
     fun removeIngredient(request: ActionRequest): ActionResponse {
         LOGGER.info("Fjern ingredients start")
         val responseBuilder = getResponseBuilder(request)
-        val rb = ResourceBundle.getBundle("resources")
-        val user = request.user
 
         val order: Order = orderManager[request]
 
@@ -265,7 +263,6 @@ class DialogflowCommunicator : DialogflowApp() {
     }
 
     companion object {
-
         private val LOGGER = LoggerFactory.getLogger(DialogflowCommunicator::class.java)
     }
 }

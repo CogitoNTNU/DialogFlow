@@ -1,7 +1,6 @@
 package com.example
 
 class ActionHandler {
-
     val orderManager = OrderManager()
 
     fun addPizza(types: List<Int>, amount: List<Int>, pizzaMenu: PizzaMenu, order: Order): List<Pizza> {
@@ -16,7 +15,7 @@ class ActionHandler {
         order.addPizza(pizzas)
         return pizzas
     }
-    
+
     fun setDeliveryAddress(deliver: Boolean, address: String, order: Order): Boolean {
         if (deliver) {
             order.deliver(true)

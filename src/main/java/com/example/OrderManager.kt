@@ -33,5 +33,4 @@ class OrderManager {
 
     operator fun set(request: ActionRequest, order: Order) = set(request.sessionId!!, order)
     operator fun get(request: ActionRequest) = get(request.sessionId!!)
-
 }
