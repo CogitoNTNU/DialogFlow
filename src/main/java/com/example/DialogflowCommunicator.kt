@@ -44,7 +44,7 @@ class DialogflowCommunicator : DialogflowApp() {
     }
 
     @ForIntent("Legg til pizza intent")
-    fun bestill(request: ActionRequest): ActionResponse {
+    fun addPizza(request: ActionRequest): ActionResponse {
         LOGGER.info("Bestill pizza start")
         val responseBuilder = getResponseBuilder(request)
         val user = request.user
@@ -62,30 +62,8 @@ class DialogflowCommunicator : DialogflowApp() {
             }
         }
 
-        var pizzas: MutableList<Pizza> = mutableListOf()
-        var counter = 0
-        for (i in types.indices) {
-            var type = types[i]
-            for (j in 0 until amount[i]) {
-                var pizza = pizzaMenu.getPizza(type)
-                if (pizza != null) {
-                    counter++
-                    pizzas.add(pizza)
-                }
-            }
-        }
+        responseBuilder.add(actionHandler.addPizza(types, amount, pizzaMenu, order))
 
-        if (pizzas.size > 0) {
-            order.addPizza(pizzas)
-            val speakList = pizzas
-                    .groupBy { it }
-                    .map { (pizza, amount) ->
-                        "${amount.size} ${pizza.describeChangesToUser()}"
-                    }
-            responseBuilder.add("Klart det! Du har bestilt ${spokenList(speakList)}")
-        } else {
-            responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?")
-        }
         LOGGER.info(responseBuilder.toString())
 
         orderManager[request] = order

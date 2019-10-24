@@ -1,11 +1,44 @@
 package com.example
 
 import com.google.actions.api.ActionRequest
+import sun.misc.Request
 import java.util.*
 
 class ActionHandler {
 
     val orderManager = OrderManager()
+
+    fun addPizza(types : List<Int>,  amount: List<Int>, pizzaMenu : PizzaMenu, order : Order): String {
+
+        var pizzas: MutableList<Pizza> = mutableListOf()
+        var counter = 0
+        for (i in types.indices) {
+            var type = types[i]
+            for (j in 0 until amount[i]) {
+                var pizza = pizzaMenu.getPizza(type)
+                if (pizza != null) {
+                    counter++
+                    pizzas.add(pizza)
+                }
+            }
+        }
+
+        return if (pizzas.size > 0) {
+            order.addPizza(pizzas)
+            val speakList = pizzas
+                    .groupBy { it }
+                    .map { (pizza, amount) ->
+                        "${amount.size} ${pizza.describeChangesToUser()}"
+                    }
+            "Klart det! Du har bestilt ${spokenList(speakList)}"
+        } else {
+            "Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?"
+        }
+
+
+    }
+
+
 
     fun delivery(request: ActionRequest){
         val order: Order = orderManager[request]
