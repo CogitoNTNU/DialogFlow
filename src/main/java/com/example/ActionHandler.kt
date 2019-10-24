@@ -1,9 +1,5 @@
 package com.example
 
-import com.google.actions.api.ActionRequest
-import sun.misc.Request
-import java.util.*
-
 class ActionHandler {
 
     val orderManager = OrderManager()
@@ -39,13 +35,8 @@ class ActionHandler {
     }
 
 
-
-    fun delivery(request: ActionRequest){
-        val order: Order = orderManager[request]
-        val delivery = request.getParameter("Deliver") as String
-        var address = request.getParameter("Address") as String
-
-        if (delivery == "deliver") {
+    fun setDeliveryAddress(deliver: Boolean, address: String, order: Order) {
+        if (deliver) {
             order.deliver(true)
             order.addAddress(address)
         } else {

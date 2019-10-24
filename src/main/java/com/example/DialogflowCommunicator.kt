@@ -187,15 +187,16 @@ class DialogflowCommunicator : DialogflowApp() {
         LOGGER.info("Delivery start")
         val responseBuilder = getResponseBuilder(request)
         val order: Order = orderManager[request]
-        val delivery = actionHandler.delivery(request)
+        val delivery = request.getParameter("Deliver") as String == "deliver"
+        val address = request.getParameter("Address") as String
 
-        if(order.delivery == true){
+        actionHandler.setDeliveryAddress(delivery, address, order)
+
+        if (order.delivery) {
             responseBuilder.add("Pizzaen vil bli levert til ${order.address}")
         } else {
             responseBuilder.add("Pizzan kan hentes hos oss")
         }
-        responseBuilder.add(" $delivery")
-
         return completeIntent(request, order, responseBuilder)
     }
 
