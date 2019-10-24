@@ -28,7 +28,7 @@ import java.util.*
  * Implements all intent handlers for this Action. Note that your App must extend from DialogflowApp
  * if using Dialogflow or ActionsSdkApp for ActionsSDK based Actions.
  */
-class DialogflowReceiver : DialogflowApp() {
+class DialogflowCommunicator : DialogflowApp() {
     val orderManager = OrderManager()
     val actionHandler = ActionHandler();
     val pizzaMenu = getPizzaMenu()
@@ -295,6 +295,6 @@ class DialogflowReceiver : DialogflowApp() {
 
     companion object {
 
-        private val LOGGER = LoggerFactory.getLogger(DialogflowReceiver::class.java)
+        private val LOGGER = LoggerFactory.getLogger(DialogflowCommunicator::class.java)
     }
 }

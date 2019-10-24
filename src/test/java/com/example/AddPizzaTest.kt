@@ -24,7 +24,7 @@ class AddPizzaTest {
     @Test
     @Throws(Exception::class)
     fun testAddPizza() {
-        val app = DialogflowReceiver()
+        val app = DialogflowCommunicator()
         val requestBody = fromFile("request_add_pizza.json")
 
         val future = app.handleRequest(requestBody, null)
@@ -38,7 +38,7 @@ class AddPizzaTest {
     @Test
     @Throws(Exception::class)
     fun testAddTwoPizzas() {
-        val app = DialogflowReceiver()
+        val app = DialogflowCommunicator()
         val requestBody = fromFile("request_add_pizza.json")
 
         app.handleRequest(requestBody, null).get()

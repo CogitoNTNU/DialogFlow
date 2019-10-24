@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse
  */
 @WebServlet(name = "actions", value = ["/"])
 class ActionsServlet : HttpServlet() {
-    private val actionsApp = DialogflowReceiver()
+    private val actionsApp = DialogflowCommunicator()
 
     @Throws(IOException::class)
     override fun doPost(req: HttpServletRequest, res: HttpServletResponse) {
