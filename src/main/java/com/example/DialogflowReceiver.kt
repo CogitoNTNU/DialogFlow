@@ -223,8 +223,9 @@ class DialogflowReceiver : DialogflowApp() {
         val user = request.user
         val order: Order = orderManager[request]
         val delivery = request.getParameter("Deliver") as String
+        var address = request.getParameter("Address") as String
 
-
+        responseBuilder.add(actionHandler.delivery(order, delivery, address))
 
         return completeIntent(request, order, responseBuilder)
     }
