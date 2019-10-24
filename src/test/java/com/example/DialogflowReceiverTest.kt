@@ -24,7 +24,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class MyActionsAppTest {
+class DialogflowReceiverTest {
 
     @Throws(IOException::class)
     private fun fromFile(fileName: String): String {
@@ -35,7 +35,7 @@ class MyActionsAppTest {
     @Test
     @Throws(Exception::class)
     fun testWelcomeUsingRawRequest() {
-        val app = MyActionsApp()
+        val app = DialogflowReceiver()
         val requestBody = fromFile("request_welcome.json")
         val expectedResponse = fromFile("response_welcome.json")
 
@@ -47,7 +47,7 @@ class MyActionsAppTest {
 
     @Test
     fun testWelcomeUsingMockRequestBuilder() {
-        val app = MyActionsApp()
+        val app = DialogflowReceiver()
         val rb = MockRequestBuilder.welcome("welcome", true)
         val request = rb.build()
 
@@ -58,7 +58,7 @@ class MyActionsAppTest {
 
     @Test
     fun testBye() {
-        val app = MyActionsApp()
+        val app = DialogflowReceiver()
         val rb = MockRequestBuilder()
         rb.setIntent("bye")
         rb.setUsesDialogflow(true)

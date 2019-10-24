@@ -29,7 +29,7 @@ import java.io.*
  */
 class ActionsAWSHandler : RequestStreamHandler {
     // Replace this with your webhook.
-    private val actionsApp = MyActionsApp()
+    private val actionsApp = DialogflowReceiver()
     private val parser = JSONParser()
 
     @Throws(IOException::class)
