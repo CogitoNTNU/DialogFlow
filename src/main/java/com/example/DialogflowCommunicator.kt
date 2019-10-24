@@ -253,16 +253,9 @@ class DialogflowCommunicator : DialogflowApp() {
 
         val order: Order = orderManager[request]
 
-        if (order.pizzas.size > 0) {
-            for (pizza: Pizza in order.pizzas) {
-                for (i in types.indices) {
-                    if (pizza.nr == types[i]) {
-                        for (j in 0 until amount[i]) {
-                            order.removePizza(pizza)
-                        }
-                        responseBuilder.add("Fjernet" + amount[i] + pizza.describeChangesToUser())
-                    }
-                }
+        if(actionHandler.removePizza(order, types, amount)) {
+            for (i in types.indices) {
+                responseBuilder.add("Fjernet" + amount[i] + getPizzaMenu().getPizza(types[i]))
             }
         }
         else {
