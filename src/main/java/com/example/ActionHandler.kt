@@ -23,4 +23,22 @@ class ActionHandler {
         }
         return
     }
+
+
+    fun findPizza(requrestedIngredients : List<String>, pizzaMenu : PizzaMenu): String {
+        var response = ""
+
+        val pizzaList = pizzaMenu.pizzaList
+                .sortedByDescending { pizza -> pizza.ingredients.count { it in requrestedIngredients } }
+                .take(3)
+                .map { p -> p.name }
+
+        response += if(pizzaList.isNotEmpty()){
+            "Her er noen pizzaer du kanskje liker: " + spokenList(pizzaList)
+        }else{
+            "Beklager, vi har ingen pizzaer med dette på. Vil du ha noe annet?"
+        }
+
+        return response
+    }
 }

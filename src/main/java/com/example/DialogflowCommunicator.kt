@@ -194,21 +194,10 @@ class DialogflowCommunicator : DialogflowApp() {
         val responseBuilder = getResponseBuilder(request)
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
-
         val order: Order = orderManager[request]
+        val requestedIngredients = request.getParameter("Ingredient") as List<String>
 
-        val requrestedIngredients = request.getParameter("Ingredient") as List<String>
-        val pizzaList = pizzaMenu.pizzaList
-                .sortedByDescending { pizza -> pizza.ingredients.count { it in requrestedIngredients } }
-                .take(3)
-                .map { p -> p.name }
-
-        if (pizzaList.isNotEmpty()) {
-            responseBuilder.add("Her er noen pizzaer du kanskje liker: " +
-                    spokenList(pizzaList))
-        } else {
-            responseBuilder.add("Beklager, vi har ingen pizzaer med dette på. Vil du ha noe annet?")
-        }
+        responseBuilder.add(actionHandler.findPizza(requestedIngredients, pizzaMenu))
 
         LOGGER.info("Finn pizza slutt")
 
