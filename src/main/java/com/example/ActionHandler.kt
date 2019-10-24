@@ -16,24 +16,22 @@ class ActionHandler {
         return pizzas
     }
 
-
-    fun setDeliveryAddress(deliver: Boolean, address: String) {
+    fun setDeliveryAddress(deliver: Boolean, address: String): Boolean {
         if (deliver) {
             order.deliver(true)
             order.addAddress(address)
+            return true
         } else {
             order.deliver(false)
+            return false
         }
-        return
     }
-
 
     fun findPizza(requestedIngredients: List<String>, pizzaMenu: PizzaMenu): List<Pizza> {
         return pizzaMenu.pizzaList
                 .sortedByDescending { pizza -> pizza.ingredients.count { it in requestedIngredients } }
                 .take(3)
     }
-
 
     fun removePizza(types: List<Int>, amount: List<Int>): Boolean {
 
@@ -52,7 +50,6 @@ class ActionHandler {
         }
         return true
     }
-
 
     fun addIngredient(addedIngredients: List<String>): Boolean {
 

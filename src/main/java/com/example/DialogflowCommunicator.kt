@@ -190,6 +190,7 @@ class DialogflowCommunicator : DialogflowApp() {
     fun delivery(request: ActionRequest): ActionResponse {
         LOGGER.info("Delivery start")
         val responseBuilder = getResponseBuilder(request)
+
         val handler = sessionManager[request]
         val delivery = request.getParameter("Deliver") as String == "deliver"
         val address = request.getParameter("Address") as String
