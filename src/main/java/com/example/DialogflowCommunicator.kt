@@ -62,7 +62,17 @@ class DialogflowCommunicator : DialogflowApp() {
             }
         }
 
-        responseBuilder.add(actionHandler.addPizza(types, amount, pizzaMenu, order))
+        val pizzas = actionHandler.addPizza(types, amount, pizzaMenu, order)
+        if (pizzas.isNotEmpty()) {
+            val speakList = pizzas
+                    .groupBy { it }
+                    .map { (pizza, amount) ->
+                        "${amount.size} ${pizza.describeChangesToUser()}"
+                    }
+            responseBuilder.add("Klart det! Jeg har lagt til ${spokenList(speakList)}")
+        } else {
+            responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?")
+        }
 
         LOGGER.info(responseBuilder.toString())
 
@@ -231,15 +241,14 @@ class DialogflowCommunicator : DialogflowApp() {
 
         val order: Order = orderManager[request]
 
-        if(actionHandler.removePizza(order, types, amount)) {
+        if (actionHandler.removePizza(order, types, amount)) {
             for (i in types.indices) {
                 responseBuilder.add("Fjernet" + amount[i] + getPizzaMenu().getPizza(types[i]))
             }
-        }
-        else {
+        } else {
             responseBuilder.add("Du har ikke bestilt noen pizzaer enda.")
         }
-        return completeIntent(request,order, responseBuilder)
+        return completeIntent(request, order, responseBuilder)
     }
 
     @ForIntent("bye")
