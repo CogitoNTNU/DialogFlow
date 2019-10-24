@@ -204,9 +204,9 @@ class DialogflowCommunicator : DialogflowApp() {
         return completeIntent(request, order, responseBuilder)
     }
 
-    @ForIntent("Leveranse")
+    @ForIntent("Delivery")
     fun delivery(request: ActionRequest): ActionResponse {
-        LOGGER.info("Leveranse start")
+        LOGGER.info("Delivery start")
         val responseBuilder = getResponseBuilder(request)
         val order: Order = orderManager[request]
         val delivery = actionHandler.delivery(request)
@@ -217,7 +217,6 @@ class DialogflowCommunicator : DialogflowApp() {
             responseBuilder.add("Pizzan kan hentes hos oss")
         }
         responseBuilder.add(" $delivery")
-
 
         return completeIntent(request, order, responseBuilder)
     }
