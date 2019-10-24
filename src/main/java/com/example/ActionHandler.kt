@@ -20,4 +20,26 @@ class ActionHandler {
         }
         return
     }
+
+
+
+    fun removePizza(order : Order,types : List<Int>, amount : List<Int>): Boolean {
+
+        if (order.pizzas.size > 0) {
+            for (pizza: Pizza in order.pizzas) {
+                for (i in types.indices) {
+                    if (pizza.nr == types[i]) {
+                        for (j in 0 until amount[i]) {
+                            order.removePizza(pizza)
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            return false
+        }
+        return true
+    }
+
 }
