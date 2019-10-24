@@ -16,11 +16,7 @@ class ActionHandler {
         return pizzas
     }
 
-    fun setDeliveryAddress(deliver: Boolean, address: String): Boolean {
-        if (deliver) {
-            order.deliver(true)
             order.addAddress(address)
-            return true
         } else {
             order.deliver(false)
             return false
