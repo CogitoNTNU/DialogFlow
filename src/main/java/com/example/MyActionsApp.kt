@@ -223,8 +223,7 @@ class MyActionsApp : DialogflowApp() {
         val user = request.user
 
         val order: Order = orderManager[request]
-
-        var delivery = request.getParameter("Deliver") as String
+        val delivery = request.getParameter("Deliver") as String
 
         if (delivery == "deliver") {
             order.deliver(true)
@@ -235,6 +234,7 @@ class MyActionsApp : DialogflowApp() {
             order.deliver(false)
             responseBuilder.add("Pizzaen kan hentes oss hos") // butikk adresse?
         }
+        responseBuilder.add(delivery)
 
         return completeIntent(request, order, responseBuilder)
     }
@@ -256,7 +256,7 @@ class MyActionsApp : DialogflowApp() {
         return responseBuilder.build()
     }
 
-    @ForIntent("Fjern pizza")
+    @ForIntent("Fjern pizza") //
     fun removePizza(request: ActionRequest): ActionResponse {
 
         LOGGER.info("Starter fjerning av pizza")
@@ -271,7 +271,6 @@ class MyActionsApp : DialogflowApp() {
         val order: Order = orderManager[request]
 
         if (order.pizzas.size > 0) {
-
             for (pizza: Pizza in order.pizzas) {
                 for (i in types.indices) {
                     if (pizza.nr == types[i]) {
