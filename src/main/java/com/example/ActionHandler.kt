@@ -4,7 +4,7 @@ class ActionHandler {
 
     val orderManager = OrderManager()
 
-    fun delivery(order: Order, method: String, address: String){
+    fun delivery(order: Order, method: String, address: String): String {
         var response = ""
 
         if (method == "deliver") {
