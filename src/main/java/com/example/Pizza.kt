@@ -3,6 +3,7 @@ package com.example
 import com.beust.klaxon.Klaxon
 import java.io.File
 
+
 data class Pizza(
         val nr: Int,
         val name: String,
@@ -29,6 +30,7 @@ data class Pizza(
     }
 }
 
+
 data class PizzaMenu(val pizzaList: List<Pizza>) {
     fun getPizza(nr: Int) = pizzaList.find { it.nr == nr }
 
@@ -37,10 +39,13 @@ data class PizzaMenu(val pizzaList: List<Pizza>) {
 
 val json = File(Pizza::javaClass.javaClass.getResource("../../pizza_overview.json").file)
 
+
 fun getPizzaMenu(): PizzaMenu {
     return Klaxon().parse<PizzaMenu>(json)!!
 }
 
 fun main(args: Array<String>) {
+
     print(getPizzaMenu().pizzaList)
+
 }
