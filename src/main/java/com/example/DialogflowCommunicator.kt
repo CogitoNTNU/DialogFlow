@@ -20,7 +20,6 @@ import com.google.actions.api.ActionRequest
 import com.google.actions.api.ActionResponse
 import com.google.actions.api.DialogflowApp
 import com.google.actions.api.ForIntent
-import com.google.actions.api.response.ResponseBuilder
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -29,26 +28,15 @@ import java.util.*
  * if using Dialogflow or ActionsSdkApp for ActionsSDK based Actions.
  */
 class DialogflowCommunicator : DialogflowApp() {
-    val orderManager = OrderManager()
-    val actionHandler = ActionHandler();
+    val sessionManager = SessionManager { ActionHandler() }
     val pizzaMenu = getPizzaMenu()
-
-    private fun completeIntent(
-            request: ActionRequest,
-            order: Order = orderManager[request],
-            responseBuilder: ResponseBuilder
-    ): ActionResponse {
-        // if (askForMore) responseBuilder.add("Skal det være noe mer?")
-        orderManager[request] = order
-        return responseBuilder.build()
-    }
 
     @ForIntent("Legg til pizza intent")
     fun addPizza(request: ActionRequest): ActionResponse {
         LOGGER.info("Bestill pizza start")
         val responseBuilder = getResponseBuilder(request)
         val user = request.user
-        val order: Order = orderManager[request]
+        val handler = sessionManager[request]
 
         var types = (request.getParameter("Type") as List<String>).map { it.toFloat().toInt() }
         var amount = (request.getParameter("Amount") as List<Any>?)
@@ -62,7 +50,7 @@ class DialogflowCommunicator : DialogflowApp() {
             }
         }
 
-        val pizzas = actionHandler.addPizza(types, amount, pizzaMenu, order)
+        val pizzas = handler.addPizza(types, amount, pizzaMenu)
         if (pizzas.isNotEmpty()) {
             val speakList = pizzas
                     .groupBy { it }
@@ -76,21 +64,22 @@ class DialogflowCommunicator : DialogflowApp() {
 
         LOGGER.info(responseBuilder.toString())
 
-        orderManager[request] = order
+        sessionManager[request] = handler
         LOGGER.info("Bestill pizza slutt")
 
-        return completeIntent(request, order, responseBuilder)
+        sessionManager[request] = handler
+        return responseBuilder.build()
     }
 
     @ForIntent("List bestilling")
     fun listOrder(request: ActionRequest): ActionResponse {
         val responseBuilder = getResponseBuilder(request)
-        val order: Order = orderManager[request]
+        val handler = sessionManager[request]
 
-        val outString = StringBuilder("Du har bestilt ${order.pizzas.size} pizza")
-        if (order.pizzas.size != 1) outString.append("er")
+        val outString = StringBuilder("Du har bestilt ${handler.order.pizzas.size} pizza")
+        if (handler.order.pizzas.size != 1) outString.append("er")
         outString.append(". ")
-        val spokenPizzas = order.pizzas
+        val spokenPizzas = handler.order.pizzas
                 .groupBy { it }
                 .map { (pizza, amounts) ->
                     "${amounts.size} nr. ${pizza.nr} ${pizza.describeChangesToUser()}"
@@ -99,7 +88,8 @@ class DialogflowCommunicator : DialogflowApp() {
 
         responseBuilder.add(outString.toString())
 
-        return completeIntent(request, order, responseBuilder)
+        sessionManager[request] = handler
+        return responseBuilder.build()
     }
 
     @ForIntent("Pizza ingredient listing")
@@ -120,7 +110,7 @@ class DialogflowCommunicator : DialogflowApp() {
         } else {
             responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hva vil du ha på pizzaen din?")
         }
-        return completeIntent(request = request, responseBuilder = responseBuilder)
+        return responseBuilder.build()
     }
 
     @ForIntent("Fjern ingredients intent")
@@ -130,15 +120,15 @@ class DialogflowCommunicator : DialogflowApp() {
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
 
-        val order: Order = orderManager[request]
+        val handler = sessionManager[request]
 
-        if (order.pizzas.size > 0) {
+        if (handler.order.pizzas.size > 0) {
 
             //val rm_i = request.getParameter("rm_i") as List<String>
             val rm_i = request.getParameter("rm_i") as List<String>
-            val lastPizza = order.pizzas.last()
+            val lastPizza = handler.order.pizzas.last()
 
-            order.changePizza(lastPizza, rm_i, emptyList())
+            handler.order.changePizza(lastPizza, rm_i, emptyList())
 
             responseBuilder.add("Fjernet ${spokenList(rm_i)}, fra ${lastPizza.name}\n" +
                     "Den siste pizzaen i ordren din er nå en ${lastPizza.describeChangesToUser()}")
@@ -147,7 +137,8 @@ class DialogflowCommunicator : DialogflowApp() {
         }
         LOGGER.info("Fjern ingredients slutt")
 
-        return completeIntent(request, order, responseBuilder)
+        sessionManager[request] = handler
+        return responseBuilder.build()
     }
 
     @ForIntent("Legg til ingredients intent")
@@ -155,20 +146,21 @@ class DialogflowCommunicator : DialogflowApp() {
         LOGGER.info("Legg til ingredients start")
         val responseBuilder = getResponseBuilder(request)
 
-        val order: Order = orderManager[request]
+        val handler = sessionManager[request]
 
         val add_i = request.getParameter("add_i") as List<String>
 
-        if (actionHandler.addIngredient(order, add_i)) {
+        if (handler.addIngredient(add_i)) {
             responseBuilder.add("La til ${spokenList(add_i)}. Siste pizza i bestillingen er nå en " +
-                    "${order.pizzas.last().describeChangesToUser()}")
+                    "${handler.order.pizzas.last().describeChangesToUser()}")
         }
         else {
             responseBuilder.add("Du har ikke bestilt denne pizzaen")
         }
         LOGGER.info("Legg til ingredients slutt")
 
-        return completeIntent(request, order, responseBuilder)
+        sessionManager[request] = handler
+        return responseBuilder.build()
     }
 
     @ForIntent("Finn pizza intent")
@@ -177,10 +169,10 @@ class DialogflowCommunicator : DialogflowApp() {
         val responseBuilder = getResponseBuilder(request)
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
-        val order: Order = orderManager[request]
+        val handler = sessionManager[request]
         val requestedIngredients = request.getParameter("Ingredient") as List<String>
 
-        val pizzaList = actionHandler.findPizza(requestedIngredients, pizzaMenu)
+        val pizzaList = handler.findPizza(requestedIngredients, pizzaMenu)
 
         responseBuilder.add(if (pizzaList.isNotEmpty()) {
             "Hva med " + spokenList(pizzaList.map { it.name })
@@ -190,7 +182,8 @@ class DialogflowCommunicator : DialogflowApp() {
 
         LOGGER.info("Finn pizza slutt")
 
-        return completeIntent(request, order, responseBuilder)
+        sessionManager[request] = handler
+        return responseBuilder.build()
     }
 
     @ForIntent("Delivery")
@@ -198,18 +191,19 @@ class DialogflowCommunicator : DialogflowApp() {
         LOGGER.info("Delivery start")
         val responseBuilder = getResponseBuilder(request)
 
-        val order: Order = orderManager[request]
+        val handler = sessionManager[request]
         val delivery = request.getParameter("Deliver") as String == "deliver"
         val address = request.getParameter("Address") as String
 
-        actionHandler.setDeliveryAddress(delivery, address, order)
+        handler.setDeliveryAddress(delivery, address)
 
-        if (order.delivery) {
-            responseBuilder.add("Pizzaen vil bli levert til ${order.address}")
+        if (handler.order.delivery) {
+            responseBuilder.add("Pizzaen vil bli levert til ${handler.order.address}")
         } else {
             responseBuilder.add("Pizzan kan hentes hos oss")
         }
-        return completeIntent(request, order, responseBuilder)
+        sessionManager[request] = handler
+        return responseBuilder.build()
     }
 
     @ForIntent("Default Welcome Intent")
@@ -241,16 +235,17 @@ class DialogflowCommunicator : DialogflowApp() {
                 ?.map { if (it is Int) it else it.toString().toFloat().toInt() }
                 ?: emptyList()
 
-        val order: Order = orderManager[request]
+        val handler = sessionManager[request]
 
-        if (actionHandler.removePizza(order, types, amount)) {
+        if (handler.removePizza(types, amount)) {
             for (i in types.indices) {
                 responseBuilder.add("Fjernet " + amount[i] + getPizzaMenu().getPizza(types[i]))
             }
         } else {
             responseBuilder.add("Du har ikke bestilt noen pizzaer enda.")
         }
-        return completeIntent(request, order, responseBuilder)
+        sessionManager[request] = handler
+        return responseBuilder.build()
     }
 
     @ForIntent("bye")

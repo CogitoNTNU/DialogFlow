@@ -44,7 +44,6 @@ class AddPizzaTest {
         app.handleRequest(requestBody, null).get()
         app.handleRequest(requestBody, null).get()
 
-        //print(app.orderManager.orders.values.single().pizzas.size)
-        assert(app.orderManager.orders.values.single().pizzas.size == 2)
+        assert(app.sessionManager.items.values.single().order.pizzas.size == 2)
     }
 }

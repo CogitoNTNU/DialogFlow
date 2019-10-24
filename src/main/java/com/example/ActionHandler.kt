@@ -1,10 +1,9 @@
 package com.example
 
 class ActionHandler {
+    val order = Order()
 
-    val orderManager = OrderManager()
-
-    fun addPizza(types: List<Int>, amount: List<Int>, pizzaMenu: PizzaMenu, order: Order): List<Pizza> {
+    fun addPizza(types: List<Int>, amount: List<Int>, pizzaMenu: PizzaMenu): List<Pizza> {
         val pizzas: MutableList<Pizza> = mutableListOf()
         for (i in types.indices) {
             val type = types[i]
@@ -16,8 +15,8 @@ class ActionHandler {
         order.addPizza(pizzas)
         return pizzas
     }
-    
-    fun setDeliveryAddress(deliver: Boolean, address: String, order: Order): Boolean {
+
+    fun setDeliveryAddress(deliver: Boolean, address: String): Boolean {
         if (deliver) {
             order.deliver(true)
             order.addAddress(address)
@@ -34,7 +33,7 @@ class ActionHandler {
                 .take(3)
     }
 
-    fun removePizza(order: Order, types: List<Int>, amount: List<Int>): Boolean {
+    fun removePizza(types: List<Int>, amount: List<Int>): Boolean {
 
         if (order.pizzas.size > 0) {
             for (pizza: Pizza in order.pizzas) {
@@ -52,7 +51,7 @@ class ActionHandler {
         return true
     }
 
-    fun addIngredient(order : Order, addedIngredients : List<String>): Boolean {
+    fun addIngredient(addedIngredients: List<String>): Boolean {
 
         if(order.pizzas.size > 0) {
             order.changePizza(order.pizzas.last(), emptyList(), addedIngredients)

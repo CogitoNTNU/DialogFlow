@@ -6,23 +6,23 @@ typealias SessionId = String
 
 const val ORDER_LIFETIME_MILLIS: Long = 10 * 60 * 1000
 
-class OrderManager {
-    internal val orders: MutableMap<SessionId, Order> = mutableMapOf()
+class SessionManager<T>(private val create: () -> T) {
+    internal val items: MutableMap<SessionId, T> = mutableMapOf()
 
     private val lastAccess: MutableMap<SessionId, Long> = mutableMapOf()
 
-    operator fun get(session: SessionId): Order {
+    operator fun get(session: SessionId): T {
         lastAccess[session] = System.currentTimeMillis()
-        return orders[session] ?: Order()
+        return items[session] ?: create()
     }
 
-    operator fun set(session: SessionId, order: Order) {
-        orders[session] = order
+    operator fun set(session: SessionId, item: T) {
+        items[session] = item
         lastAccess[session] = System.currentTimeMillis()
     }
 
     fun remove(session: SessionId) {
-        orders.remove(session)
+        items.remove(session)
         lastAccess.remove(session)
     }
 
@@ -31,7 +31,7 @@ class OrderManager {
         lastAccess.filterValues { it < removeOlderThan }.keys.forEach(::remove)
     }
 
-    operator fun set(request: ActionRequest, order: Order) = set(request.sessionId!!, order)
+    operator fun set(request: ActionRequest, item: T) = set(request.sessionId!!, item)
     operator fun get(request: ActionRequest) = get(request.sessionId!!)
 
 }
