@@ -12,6 +12,7 @@ jobs:
           -in Dialogflow-prosjektet-80303a8d5040.json.enc -out Dialogflow-prosjektet-80303a8d5040.json
           -d
       install:
+        - rm -Rf $HOME/google-cloud-sdk
         - curl https://sdk.cloud.google.com | bash
         - export PATH=$HOME/google-cloud-sdk/bin:$PATH
         - gcloud components install app-engine-java
@@ -29,7 +30,6 @@ cache:
   directories:
     - "$HOME/.gradle/caches/"
     - "$HOME/.gradle/wrapper/"
-    - "$HOME/google-cloud-sdk/"
 notifications:
   slack:
     secure: IfNJmJfg8+F4bOkuhPwMBdR98CZpcAVClvaLISGfjmlcuaPqvg5FXtPpYDp5WS5m99dlyqK/bIEpS32dkxjAKFKkrRlrmtkE5N6eZvjueYSqNUACjM4tRWYeq6i/AgH7SogU/5DMgI6OthbPX1OQpThteXOrrU+K5LqFu9wKGtqVs7BpBrmHQHe6IO2e6ZP0tS2SYEyeU+WaebpGZMkYtM0cbvn1FCBXFUQBbiYFr7HBKhv7t/SF8fQFvbnBmpE3+gV0/dyM3P40JGnd8VcsNFcCFIL8s6YFgBJnh8r/Lo7xm1XPSiFJZQ3iOiQA/pkwgshwI3Q7BF5oyUbb0SF30BrVjD+cfFum7/LzSSM8cgo0E4mjI6pCQMmYXPZ4ZIPizBtit8aOW2I0KuqgIoe+OkG52jCzAF1wT+MFVwaWwm/HejOlg0FRmhvCqJVDC1WlQjraErL3YwG7BjG5UIEg0I2kd1TsX/79BZcyNMtlg8GvBL+wQ4sibd7B6s3Vl3BlmpKilmtAMCoKvPwjlZfcA4xWeXcGL4JkOPSgMNUoUYqz9jL8aBcM4nLwrmw74OyofB/ld3i19X16c/Qhn1bq1T2XjknuDmYOmwRaEVckdJjkyrIjNzlwQfHY+3sMI1S1ByVSLSqpefW73bYfGmJMPArZU5aEdgyET9ZPWBLap7s=
