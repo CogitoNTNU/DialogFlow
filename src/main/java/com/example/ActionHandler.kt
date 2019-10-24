@@ -8,9 +8,6 @@ class ActionHandler {
     val orderManager = OrderManager()
 
     fun delivery(request: ActionRequest){
-
-        val rb = ResourceBundle.getBundle("resources")
-        val user = request.user
         val order: Order = orderManager[request]
         val delivery = request.getParameter("Deliver") as String
         var address = request.getParameter("Address") as String
