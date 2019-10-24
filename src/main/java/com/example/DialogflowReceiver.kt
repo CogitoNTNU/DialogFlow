@@ -219,19 +219,15 @@ class DialogflowReceiver : DialogflowApp() {
     fun delivery(request: ActionRequest): ActionResponse {
         LOGGER.info("Leveranse start")
         val responseBuilder = getResponseBuilder(request)
-        val rb = ResourceBundle.getBundle("resources")
-        val user = request.user
         val order: Order = orderManager[request]
-        val delivery = request.getParameter("Deliver") as String
-        var address = request.getParameter("Address") as String
+        val delivery = actionHandler.delivery(request)
 
-        actionHandler.delivery(order, delivery, address)
         if(order.delivery == true){
-            responseBuilder.add("Pizzaen vil bli levert til $address")
+            responseBuilder.add("Pizzaen vil bli levert til ${order.address}")
         } else {
             responseBuilder.add("Pizzan kan hentes hos oss")
         }
-        responseBuilder.add( " " + delivery)
+        responseBuilder.add(" $delivery")
 
 
         return completeIntent(request, order, responseBuilder)
