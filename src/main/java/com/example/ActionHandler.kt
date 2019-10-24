@@ -18,14 +18,15 @@ class ActionHandler {
     }
 
 
-    fun setDeliveryAddress(deliver: Boolean, address: String, order: Order) {
+    fun setDeliveryAddress(deliver: Boolean, address: String, order: Order): Boolean {
         if (deliver) {
             order.deliver(true)
             order.addAddress(address)
+            return true
         } else {
             order.deliver(false)
+            return false
         }
-        return
     }
 
 
