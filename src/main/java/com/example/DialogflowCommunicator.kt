@@ -50,7 +50,7 @@ class DialogflowCommunicator : DialogflowApp() {
             }
         }
 
-        val pizzas = handler.addPizza(types, amount, pizzaMenu)
+        val pizzas = handler.addPizza(types, amount, pizzaMenu).pizzas
         if (pizzas.isNotEmpty()) {
             val speakList = pizzas
                     .groupBy { it }
@@ -71,7 +71,7 @@ class DialogflowCommunicator : DialogflowApp() {
         return responseBuilder.build()
     }
 
-    @ForIntent("List bestilling")
+    @ForIntent("List bestilling") // TODO
     fun listOrder(request: ActionRequest): ActionResponse {
         val responseBuilder = getResponseBuilder(request)
         val handler = sessionManager[request]
@@ -92,7 +92,7 @@ class DialogflowCommunicator : DialogflowApp() {
         return responseBuilder.build()
     }
 
-    @ForIntent("Pizza ingredient listing")
+    @ForIntent("Pizza ingredient listing") // TODO
     fun listIngredients(request: ActionRequest): ActionResponse {
         val responseBuilder = getResponseBuilder(request)
         val type = request.getParameter("Type").let {
@@ -117,24 +117,19 @@ class DialogflowCommunicator : DialogflowApp() {
     fun removeIngredient(request: ActionRequest): ActionResponse {
         LOGGER.info("Fjern ingredients start")
         val responseBuilder = getResponseBuilder(request)
-        val rb = ResourceBundle.getBundle("resources")
-        val user = request.user
 
         val handler = sessionManager[request]
 
-        if (handler.order.pizzas.size > 0) {
+        val ingredientsToRemove = request.getParameter("rm_i") as List<String>
+        val explicitPizza = (request.getParameter("pizza") as String?)?.let { pizzaMenu.getPizza(it) }
 
-            //val rm_i = request.getParameter("rm_i") as List<String>
-            val rm_i = request.getParameter("rm_i") as List<String>
-            val lastPizza = handler.order.pizzas.last()
-
-            handler.order.changePizza(lastPizza, rm_i, emptyList())
-
-            responseBuilder.add("Fjernet ${spokenList(rm_i)}, fra ${lastPizza.name}\n" +
-                    "Den siste pizzaen i ordren din er nå en ${lastPizza.describeChangesToUser()}")
-        } else {
-            responseBuilder.add("Du har ikke bestilt denne pizzaen")
+        try {
+            val change = handler.changePizza(explicitPizza, emptyList(), ingredientsToRemove)
+            responseBuilder.add("Nå har du ${spokenList(change.pizzas.map { it.name })} uten ${spokenList(ingredientsToRemove)}.")
+        } catch (e: AmbiguityException) {
+            responseBuilder.add("Unnskyld, hvilken pizza var det du ville endre?")
         }
+
         LOGGER.info("Fjern ingredients slutt")
 
         sessionManager[request] = handler
@@ -148,14 +143,14 @@ class DialogflowCommunicator : DialogflowApp() {
 
         val handler = sessionManager[request]
 
-        val add_i = request.getParameter("add_i") as List<String>
+        val ingredientsToAdd = request.getParameter("add_i") as List<String>
+        val explicitPizza = (request.getParameter("pizza") as String?)?.let { pizzaMenu.getPizza(it) }
 
-        if (handler.addIngredient(add_i)) {
-            responseBuilder.add("La til ${spokenList(add_i)}. Siste pizza i bestillingen er nå en " +
-                    "${handler.order.pizzas.last().describeChangesToUser()}")
-        }
-        else {
-            responseBuilder.add("Du har ikke bestilt denne pizzaen")
+        try {
+            val change = handler.changePizza(explicitPizza, ingredientsToAdd, emptyList())
+            responseBuilder.add("Greit, legger til ${spokenList(ingredientsToAdd)} på ${spokenList(change.pizzas.map { it.name })}.")
+        } catch (e: AmbiguityException) {
+            responseBuilder.add("Beklager, jeg er ikke sikker på hvilken pizza du vil legge til ${spokenList(ingredientsToAdd)} på.")
         }
         LOGGER.info("Legg til ingredients slutt")
 
@@ -175,7 +170,7 @@ class DialogflowCommunicator : DialogflowApp() {
         val pizzaList = handler.findPizza(requestedIngredients, pizzaMenu)
 
         responseBuilder.add(if (pizzaList.isNotEmpty()) {
-            "Hva med " + spokenList(pizzaList.map { it.name })
+            "Hva med ${spokenList(pizzaList.map { it.name }, "eller")}?"
         } else {
             "Beklager, vi har ingen pizzaer med dette på. Vil du ha noe annet?"
         })
