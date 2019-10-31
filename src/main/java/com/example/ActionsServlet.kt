@@ -59,7 +59,7 @@ class ActionsServlet : HttpServlet() {
     @Throws(IOException::class)
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
         val allSessions = actionsApp.sessionManager.getAll()
-        response.contentType = "json"
+        response.contentType = "application/json"
         response
                 .writer
                 .println(Klaxon().toJsonString(allSessions.mapValues { it.value.order }))
