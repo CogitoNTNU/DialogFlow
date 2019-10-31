@@ -68,7 +68,7 @@ class DialogflowCommunicator : DialogflowApp() {
                     .map { (pizza, amount) ->
                         "${amount.size} ${pizza.describeChangesToUser()}"
                     }
-            responseBuilder.add("Klart det! Jeg har lagt til ${spokenList(speakList)}")
+            responseBuilder.add("Klart det! Jeg har lagt til ${spokenList(speakList)} skal det være noe mer?")
         } else {
             responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?")
         }
