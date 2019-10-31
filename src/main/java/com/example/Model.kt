@@ -23,8 +23,10 @@ data class ChangePizza(
 }
 
 interface Question
+interface ClarificationQuestion : Question
+class WhichPizzaToRemoveQuestion : ClarificationQuestion
 class AnythingMoreQuestion : Question
-data class WhichPizzaToChangeQuestion(val changePizza: ChangePizza) : Question
+data class WhichPizzaToChangeQuestion(val changePizza: ChangePizza) : ClarificationQuestion
 class DeliverOrPickupQuestion : Question
 class PlaceOrderQuestion : Question
 class FirstPizzaQuestion : Question

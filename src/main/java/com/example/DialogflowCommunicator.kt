@@ -135,7 +135,7 @@ class DialogflowCommunicator : DialogflowApp() {
         val explicitPizza = (request.getParameter("pizza") as String?)?.let { pizzaMenu.getPizza(it) }
 
         try {
-            val change = handler.changePizza(explicitPizza, emptyList(), ingredientsToRemove)
+            val change = handler.changePizza(explicitPizza, emptySet(), ingredientsToRemove.toSet())
             responseBuilder.add("Nå har du ${spokenList(change.pizzas.map { it.name })} uten ${spokenList(ingredientsToRemove)}.")
         } catch (e: AmbiguityException) {
             responseBuilder.add("Unnskyld, hvilken pizza var det du ville endre?")
@@ -158,7 +158,7 @@ class DialogflowCommunicator : DialogflowApp() {
         val explicitPizza = (request.getParameter("pizza") as String?)?.let { pizzaMenu.getPizza(it) }
 
         try {
-            val change = handler.changePizza(explicitPizza, ingredientsToAdd, emptyList())
+            val change = handler.changePizza(explicitPizza, ingredientsToAdd.toSet(), emptySet())
             responseBuilder.add("Greit, legger til ${spokenList(ingredientsToAdd)} på ${spokenList(change.pizzas.map { it.name })}.")
         } catch (e: AmbiguityException) {
             responseBuilder.add("Beklager, jeg er ikke sikker på hvilken pizza du vil legge til ${spokenList(ingredientsToAdd)} på.")

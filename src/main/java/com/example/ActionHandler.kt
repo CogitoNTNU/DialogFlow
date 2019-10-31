@@ -30,9 +30,10 @@ class ActionHandler {
 
     fun removePizza(pizzas: List<Pizza>): RemovePizza {
         if (pizzas.isEmpty()) {
+            val question = history.add(WhichPizzaToRemoveQuestion())
             return removePizza(
                     history.findEntity<PizzaMention> { it !is RemovePizza }?.pizzas
-                            ?: throw AmbiguityException(Pizza::class)
+                            ?: throw AmbiguityException(Pizza::class, question)
             )
         }
         for (pizza in pizzas) order.removePizza(pizza)
@@ -40,24 +41,33 @@ class ActionHandler {
     }
 
     @Throws(AmbiguityException::class)
-    fun changePizza(explicitPizza: Pizza?, additions: List<String>, removals: List<String>): ChangePizza = try {
+    fun changePizza(explicitPizza: Pizza?, additions: Set<String>, removals: Set<String>): ChangePizza = try {
         // Either the user said now which pizza they want to change…
         val pizza = explicitPizza
         //         … or they said so previously:
                 ?: history.findCurrentEntity<PizzaMention>()?.pizzas?.singleOrNull()
                 // … or we should complain that we don't know what they're talking about:
-                ?: throw AmbiguityException(Pizza::class)
+                ?: throw AmbiguityException(
+                        Pizza::class,
+                        askWhichPizzaToChange(additions, removals)
+                )
 
         if (order.changePizza(pizza, additions, removals)) {
-            history.add(ChangePizza(pizza, additions.toSet(), removals.toSet()))
+            history.add(ChangePizza(pizza, additions, removals))
         } else {
             // This pizza is not ordered yet. Add it, and try again
             addPizza(singletonList(pizza))
             changePizza(pizza, additions, removals)
         }
     } catch (e: NoSuchElementException) {
-        throw AmbiguityException(Pizza::class)
+        throw AmbiguityException(
+                Pizza::class,
+                askWhichPizzaToChange(additions, removals)
+        )
     }
+
+    private fun askWhichPizzaToChange(additions: Set<String>, removals: Set<String>) =
+            history.add(WhichPizzaToChangeQuestion(ChangePizza(emptyList(), additions, removals)))
 
     fun logPizzaInfo(pizza: Pizza) {
         history.add(UnclassifiedPizzaMention(pizza))
