@@ -1,12 +1,47 @@
 package com.example
 
-import java.util.function.Predicate
+class ConversationHistory<S:Any> {
+    /**
+     * Do not use directly!
+     */
+    val stack = mutableListOf<S>()
 
-interface ConversationHistory {
-    fun <T : Any> findCurrentEntity(): T
-    fun <T : Any> findEntity(predicate: Predicate<T>): T
-    fun <T : Any> findAllEntities(predicate: Predicate<T>): List<T>
+    /**
+     * Returns all items of the specified type, in the order they were mentioned.
+     * Most recently mentioned last.
+     */
+    inline fun <reified T : S> findAllOfType(): List<T> = stack.filterIsInstance<T>()
 
-    fun addEntity(entity: Any)
-    fun addEntities(entity: Collection<Any>)
+    /**
+     * Most recently mentioned item of the given type
+     */
+    inline fun <reified T : S> findCurrentEntity(): T = stack.last { it is T } as T
+
+    /**
+     * Find the most recently mentioned entity matching the given predicate, if it exists
+     */
+    inline fun <reified T : S> findEntity(predicate: (T)->Boolean): T? =
+            findAllOfType<T>().findLast(predicate)
+
+    /**
+     * Find all entities matching the given predicate.
+     * Most recently mentioned last.
+     */
+    inline fun <reified T : S> findAllEntities(predicate: (T)->Boolean): List<T> = findAllOfType<T>().filter(predicate)
+
+    /**
+     * Add the given entity
+     */
+    fun <T:S>add(entity: T) :T {
+        stack.add(entity)
+        return entity
+    }
+
+    /**
+     * Add the given entities. Most recently mentioned last.
+     */
+    fun <T:S>addAll(entities: Collection<T>) :Collection<T>{
+        stack.addAll(entities)
+        return entities
+    }
 }

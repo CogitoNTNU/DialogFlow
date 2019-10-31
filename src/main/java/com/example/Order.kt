@@ -20,7 +20,16 @@ data class Order(var pizzas: MutableList<Pizza> = mutableListOf(),
 
     fun addExtra(itemName: String, price: Double) = extras.add(Extra(itemName, price))
 
-    fun changePizza(pizza: Pizza, remove: List<String>, add: List<String>) = pizzas.find { it == pizza }?.change(remove, add)
+    /**
+     * @return True if the changes were made, false if the pizza couldn't be found
+     */
+    fun changePizza(pizza: Pizza, add: List<String>, remove: List<String>): Boolean {
+        val it = pizzas.find { it == pizza }
+        return if (it != null) {
+            it.change(add, remove)
+            true
+        } else false
+    }
 
     fun removePizza(pizza: Pizza) = pizzas.remove(pizza)
 

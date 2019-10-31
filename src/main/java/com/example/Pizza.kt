@@ -14,7 +14,7 @@ data class Pizza(
 ) {
     val ingredients: Set<String> = originalIngredients - removals + additions
 
-    fun change(remove: List<String>, add: List<String>) {
+    fun change(add: List<String>, remove: List<String>) {
         additions += add
         removals += remove
         additions -= remove
