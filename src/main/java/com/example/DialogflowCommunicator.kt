@@ -250,7 +250,7 @@ class DialogflowCommunicator : DialogflowApp() {
                         for (j in 0 until amount[i]) {
                             removedPizzas.add(pizza)
                         }
-                        responseBuilder.add("Fjernet " + amount[i] + pizza.describeChangesToUser())
+                        responseBuilder.add("Fjernet " + amount[i] +" "+ pizza.describeChangesToUser())
                     }
                 }
             }
