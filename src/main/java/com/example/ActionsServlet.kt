@@ -53,6 +53,9 @@ class ActionsServlet : HttpServlet() {
 
     }
 
+    /*
+    https://dialogflow-cogito.appspot.com/
+     */
     @Throws(IOException::class)
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
         val allSessions = actionsApp.sessionManager.getAll()
@@ -64,7 +67,7 @@ class ActionsServlet : HttpServlet() {
 
     private fun writeResponse(res: HttpServletResponse, asJson: String) {
         try {
-            res.writer.write(asJson)
+            res.writer.write(asJson +"\n")
         } catch (e: IOException) {
             e.printStackTrace()
         }
