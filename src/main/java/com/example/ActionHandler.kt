@@ -29,6 +29,12 @@ class ActionHandler {
     }
 
     fun removePizza(pizzas: List<Pizza>): RemovePizza {
+        if (pizzas.isEmpty()) {
+            return removePizza(
+                    history.findEntity<PizzaMention> { it !is RemovePizza }?.pizzas
+                            ?: throw AmbiguityException(Pizza::class)
+            )
+        }
         for (pizza in pizzas) order.removePizza(pizza)
         return history.add(RemovePizza(pizzas))
     }
