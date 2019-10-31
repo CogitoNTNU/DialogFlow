@@ -41,27 +41,7 @@ class ActionHandler {
         return suggestions
     }
 
-    @Deprecated("This should be in DialogflowCommunicator") // TODO
-    fun removePizza(types: List<Int>, amount: List<Int>): Boolean {
-        val removedPizzas = mutableListOf<Pizza>()
-        return if (order.pizzas.isNotEmpty()) {
-            for (pizza: Pizza in order.pizzas) {
-                for (i in types.indices) {
-                    if (pizza.nr == types[i]) {
-                        for (j in 0 until amount[i]) {
-                            removedPizzas.add(pizza)
-                        }
-                    }
-                }
-            }
-            removePizza(removedPizzas)
-            true
-        } else {
-            false
-        }
-    }
-
-    private fun removePizza(pizzas: List<Pizza>): RemovePizza {
+    fun removePizza(pizzas: List<Pizza>): RemovePizza {
         for (pizza in pizzas) order.removePizza(pizza)
         return history.add(RemovePizza(pizzas))
     }

@@ -232,13 +232,23 @@ class DialogflowCommunicator : DialogflowApp() {
 
         val handler = sessionManager[request]
 
-        if (handler.removePizza(types, amount)) {
-            for (i in types.indices) {
-                responseBuilder.add("Fjernet " + amount[i] + getPizzaMenu().getPizza(types[i]))
+        val removedPizzas = mutableListOf<Pizza>()
+        if (handler.order.pizzas.isNotEmpty()) {
+            for (pizza: Pizza in handler.order.pizzas) {
+                for (i in types.indices) {
+                    if (pizza.nr == types[i]) {
+                        for (j in 0 until amount[i]) {
+                            removedPizzas.add(pizza)
+                        }
+                        responseBuilder.add("Fjernet " + amount[i] + pizza)
+                    }
+                }
             }
-        } else {
-            responseBuilder.add("Du har ikke bestilt noen pizzaer enda.")
         }
+        else {
+            responseBuilder.add("Du har ingen pizzaer å fjerne")
+        }
+        handler.removePizza(removedPizzas)
         sessionManager[request] = handler
         return responseBuilder.build()
     }
