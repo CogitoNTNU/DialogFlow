@@ -59,9 +59,11 @@ class DialogflowCommunicator : DialogflowApp() {
             }
         }
 
+        val result = handler.addPizza(pizzas)
 
-        if (pizzas.isNotEmpty()) {
-            val speakList = pizzas
+
+        if (result.pizzas.isNotEmpty()) {
+            val speakList = result.pizzas
                     .groupBy { it }
                     .map { (pizza, amount) ->
                         "${amount.size} ${pizza.describeChangesToUser()}"
@@ -73,7 +75,6 @@ class DialogflowCommunicator : DialogflowApp() {
 
         LOGGER.info(responseBuilder.toString())
 
-        sessionManager[request] = handler
         LOGGER.info("Bestill pizza slutt")
 
         sessionManager[request] = handler
