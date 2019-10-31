@@ -44,7 +44,7 @@ class ActionHandler {
         // Either the user said now which pizza they want to change…
         val pizza = explicitPizza
         //         … or they said so previously:
-                ?: history.findCurrentEntity<PizzaMention>().pizzas.singleOrNull()
+                ?: history.findCurrentEntity<PizzaMention>()?.pizzas?.singleOrNull()
                 // … or we should complain that we don't know what they're talking about:
                 ?: throw AmbiguityException(Pizza::class)
 
@@ -57,6 +57,20 @@ class ActionHandler {
         }
     } catch (e: NoSuchElementException) {
         throw AmbiguityException(Pizza::class)
+    }
+
+    fun logPizzaInfo(pizza: Pizza) {
+        history.add(UnclassifiedPizzaMention(pizza))
+    }
+
+    fun garbageInput(): Question? {
+        val latest = history.findCurrentEntity<Any>()
+        // If we've already asked a question, don't ask another one
+        if (latest is Question) return null
+        // If the user has given us delivery info, ask if we should enter the order
+        if (order.pizzas.isEmpty()) return FirstPizzaQuestion()
+        if (order.address.isBlank()) return DeliverOrPickupQuestion()
+        return PlaceOrderQuestion()
     }
 
 }

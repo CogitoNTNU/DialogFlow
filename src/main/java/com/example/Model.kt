@@ -21,3 +21,10 @@ data class ChangePizza(
     constructor(pizza: Pizza, additions: Set<String> = emptySet(), removals: Set<String> = emptySet()) :
             this(singletonList(pizza), additions, removals)
 }
+
+interface Question
+class AnythingMoreQuestion : Question
+data class WhichPizzaToChangeQuestion(val changePizza: ChangePizza) : Question
+class DeliverOrPickupQuestion : Question
+class PlaceOrderQuestion : Question
+class FirstPizzaQuestion : Question

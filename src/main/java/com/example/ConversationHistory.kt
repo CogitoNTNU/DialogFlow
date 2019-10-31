@@ -15,7 +15,7 @@ class ConversationHistory<S:Any> {
     /**
      * Most recently mentioned item of the given type
      */
-    inline fun <reified T : S> findCurrentEntity(): T = stack.last { it is T } as T
+    inline fun <reified T : S> findCurrentEntity(): T? = stack.lastOrNull { it is T } as T?
 
     /**
      * Find the most recently mentioned entity matching the given predicate, if it exists

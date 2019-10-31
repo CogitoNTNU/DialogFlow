@@ -117,6 +117,7 @@ class DialogflowCommunicator : DialogflowApp() {
         val pizza = pizzaMenu.getPizza(type)
         if (pizza != null) {
             responseBuilder.add("På ${pizza.name} er det ${spokenList(pizza.ingredients)}")
+            sessionManager[request].logPizzaInfo(pizza)
         } else {
             responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hva vil du ha på pizzaen din?")
         }
@@ -184,6 +185,7 @@ class DialogflowCommunicator : DialogflowApp() {
         } else {
             "Beklager, vi har ingen pizzaer med dette på. Vil du ha noe annet?"
         })
+        pizzaList.forEach(handler::logPizzaInfo)
 
         LOGGER.info("Finn pizza slutt")
 
@@ -259,6 +261,26 @@ class DialogflowCommunicator : DialogflowApp() {
             responseBuilder.add("Du har ingen pizzaer å fjerne")
         }
         handler.removePizza(removedPizzas)
+        sessionManager[request] = handler
+        return responseBuilder.build()
+    }
+
+    @ForIntent("Default Fallback Intent")
+    fun fallback(request: ActionRequest): ActionResponse {
+        LOGGER.info("Fallback intent start")
+        val responseBuilder = getResponseBuilder(request)
+        val handler = sessionManager[request]
+
+        val question = handler.garbageInput()
+        val prompt = when {
+            question is FirstPizzaQuestion -> "Hvis du vet hva du vil ha, er det bare å si navnet på pizzaen. Hvis du ikke vet helt hvilken pizza du vil ha, bare si noe fyll du liker, så finner vi en god pizza. Hva har du lyst på?"
+            question is AnythingMoreQuestion -> "Vil du ha noen flere pizzaer?"
+            question is DeliverOrPickupQuestion -> "Hvis det var alt, vil du ha pizzaen levert på døra, eller hente den selv?"
+            question is PlaceOrderQuestion -> "Nå er hele bestillingen klar. Vil du sende den inn til pizzabakeren?"
+            else -> getFallbackResponse()
+        }
+        responseBuilder.add(prompt)
+
         sessionManager[request] = handler
         return responseBuilder.build()
     }

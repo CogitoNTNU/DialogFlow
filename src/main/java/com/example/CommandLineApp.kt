@@ -34,6 +34,7 @@ fun main() {
                     TODO("Not implemented yet")
                 }
                 "p", "pizza" -> println(pizzaMenu.pizzaList.map { "${it.nr}\t${it.name}" }.joinToString("\n"))
+                else -> println(handler.garbageInput() ?: "Ingenting")
             }
         }
     } catch (e: Exception) {
