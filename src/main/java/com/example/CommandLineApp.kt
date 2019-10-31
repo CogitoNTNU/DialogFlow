@@ -18,7 +18,7 @@ fun main() {
                     println("Hva skal fjernes?")
                     // val items =  readLine()!!.split(",").mapNotNull { pizzaMenu.getPizza(it.toInt()) }
                     val items = readLine()!!.split(",").map { it.toInt() }
-                    println(handler.removePizza(items, items.map { 1 }))
+                    println(handler.removePizza(items.mapNotNull { pizzaMenu.getPizza(it) }))
                 }
                 "l", "list" -> {
                     println(handler.order.toString())
