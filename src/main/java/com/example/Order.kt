@@ -1,6 +1,7 @@
 package com.example
 
 import com.beust.klaxon.Klaxon
+import java.time.LocalDateTime
 
 // Data classes for storing drinks and side dishes
 data class Extra(val name: String, val price: Double)
@@ -10,7 +11,9 @@ data class Order(var pizzas: MutableList<Pizza> = mutableListOf(),
                  var name: String = "",
                  var phone: String = "",
                  var delivery: Boolean = false,
-                 var address: String = "") {
+                 var address: String = "",
+                 val time: String = LocalDateTime.now().toString()
+) {
 
     fun addPizza(pizza: Pizza) = pizzas.add(pizza)
 

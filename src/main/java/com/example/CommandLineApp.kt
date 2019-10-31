@@ -6,7 +6,7 @@ fun main() {
     println("Hei!")
     try {
         while (true) {
-            println("Hva vil du gjøre? (add, remove, list, change, pizza)")
+            println("Hva vil du gjøre? (add, remove, list, change, pizza, delivery)")
             when (readLine()!!.trim()) {
                 "a", "add" -> {
                     println("Hva skal legges til?")
@@ -33,7 +33,15 @@ fun main() {
                     // val item = readLine()!!.toIntOrNull()
                     TODO("Not implemented yet")
                 }
-                "p", "pizza" -> println(pizzaMenu.pizzaList.map { "${it.nr}\t${it.name}" }.joinToString("\n"))
+                "p", "pizza" -> {
+                    println(pizzaMenu.pizzaList.map { "${it.nr}\t${it.name}" }.joinToString("\n"))
+                }
+                "d", "delivery" -> {
+                    println("Change delivery")
+                    var prev = handler.order.delivery
+                    handler.setDeliveryAddress( !handler.order.delivery, " " )
+                    println("$prev -> ${handler.order.delivery}")
+                }
                 else -> println(handler.garbageInput() ?: "Ingenting")
             }
         }
