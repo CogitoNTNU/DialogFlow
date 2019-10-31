@@ -55,11 +55,11 @@ class ActionsServlet : HttpServlet() {
 
     @Throws(IOException::class)
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
-        val allOrders = actionsApp.orderManager.getAll()
+        val allSessions = actionsApp.sessionManager.getAll()
         response.contentType = "text/plain"
         response
                 .writer
-                .println(Klaxon().toJsonString(allOrders))
+                .println(Klaxon().toJsonString(allSessions.mapValues { it.value.order }))
     }
 
     private fun writeResponse(res: HttpServletResponse, asJson: String) {
