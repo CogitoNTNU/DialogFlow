@@ -6,19 +6,6 @@ class ActionHandler {
     val order = Order()
     val history = ConversationHistory<Any>()
 
-    @Deprecated("This should be in DialogflowCommunicator") // TODO
-    fun addPizza(types: List<Int>, amount: List<Int>, pizzaMenu: PizzaMenu): AddPizza {
-        val pizzas: MutableList<Pizza> = mutableListOf()
-        for (i in types.indices) {
-            val type = types[i]
-            for (j in 0 until amount[i]) {
-                val pizza = pizzaMenu.getPizza(type)
-                if (pizza != null) pizzas.add(pizza)
-            }
-        }
-        return addPizza(pizzas)
-    }
-
     fun addPizza(pizzas: List<Pizza>): AddPizza {
         order.addPizza(pizzas)
         return history.add(AddPizza(pizzas))

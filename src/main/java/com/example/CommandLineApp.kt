@@ -12,7 +12,7 @@ fun main() {
                     println("Hva skal legges til?")
                     // val items =  readLine()!!.split(",").mapNotNull { pizzaMenu.getPizza(it.toInt()) }
                     val items = readLine()!!.split(",").map { it.toInt() }
-                    println(handler.addPizza(items, items.map { 1 }, pizzaMenu))
+                    println(handler.addPizza(items.mapNotNull { pizzaMenu.getPizza(it) }))
                 }
                 "r", "remove" -> {
                     println("Hva skal fjernes?")

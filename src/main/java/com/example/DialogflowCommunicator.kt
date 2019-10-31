@@ -50,7 +50,16 @@ class DialogflowCommunicator : DialogflowApp() {
             }
         }
 
-        val pizzas = handler.addPizza(types, amount, pizzaMenu).pizzas
+        val pizzas: MutableList<Pizza> = mutableListOf()
+        for (i in types.indices) {
+            val type = types[i]
+            for (j in 0 until amount[i]) {
+                val pizza = pizzaMenu.getPizza(type)
+                if (pizza != null) pizzas.add(pizza)
+            }
+        }
+
+
         if (pizzas.isNotEmpty()) {
             val speakList = pizzas
                     .groupBy { it }
@@ -240,7 +249,7 @@ class DialogflowCommunicator : DialogflowApp() {
                         for (j in 0 until amount[i]) {
                             removedPizzas.add(pizza)
                         }
-                        responseBuilder.add("Fjernet " + amount[i] + pizza)
+                        responseBuilder.add("Fjernet " + amount[i] + pizza.describeChangesToUser())
                     }
                 }
             }
