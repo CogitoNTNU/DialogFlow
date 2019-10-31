@@ -16,6 +16,7 @@
 
 package com.example
 
+import com.beust.klaxon.Klaxon
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.util.concurrent.ExecutionException
@@ -54,11 +55,11 @@ class ActionsServlet : HttpServlet() {
 
     @Throws(IOException::class)
     override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
+        val allOrders = actionsApp.orderManager.getAll()
         response.contentType = "text/plain"
         response
                 .writer
-                .println(
-                        "ActionsServlet is listening but requires valid POST request to respond with Action response.")
+                .println(Klaxon().toJsonString(allOrders))
     }
 
     private fun writeResponse(res: HttpServletResponse, asJson: String) {

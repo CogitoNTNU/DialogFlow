@@ -33,5 +33,6 @@ class SessionManager<T>(private val create: () -> T) {
 
     operator fun set(request: ActionRequest, item: T) = set(request.sessionId!!, item)
     operator fun get(request: ActionRequest) = get(request.sessionId!!)
+    fun getAll() = orders.toMap()
 
 }
