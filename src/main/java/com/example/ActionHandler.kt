@@ -82,4 +82,16 @@ class ActionHandler {
         return PlaceOrderQuestion()
     }
 
+    fun pizzaName(pizza: Pizza): PizzaMention? {
+        return when (val question = history.findCurrentEntity<Question>()) {
+            is WhichPizzaToChangeQuestion -> {
+                val change = question.changePizza
+                changePizza(pizza, change.additions, change.removals)
+            }
+            is AnythingMoreQuestion, is FirstPizzaQuestion -> addPizza(singletonList(pizza))
+            is WhichPizzaToRemoveQuestion -> removePizza(singletonList(pizza))
+            else -> null
+        }
+    }
+
 }

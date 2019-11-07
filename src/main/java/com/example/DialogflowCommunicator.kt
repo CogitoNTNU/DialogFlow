@@ -38,7 +38,7 @@ class DialogflowCommunicator : DialogflowApp() {
         val user = request.user
         val handler = sessionManager[request]
 
-        var types = (request.getParameter("Type") as List<String>).map { it.toFloat().toInt() }
+        var types = (request.getParameter("Type") as List<String>).mapNotNull { it.toFloatOrNull()?.toInt() }
         var amount = (request.getParameter("Amount") as List<Any>?)
                 ?.map { if (it is Int) it else it.toString().toFloat().toInt() }
                 ?: emptyList()
@@ -63,12 +63,7 @@ class DialogflowCommunicator : DialogflowApp() {
 
 
         if (result.pizzas.isNotEmpty()) {
-            val speakList = result.pizzas
-                    .groupBy { it }
-                    .map { (pizza, amount) ->
-                        "${amount.size} ${pizza.describeChangesToUser()}"
-                    }
-            responseBuilder.add("Klart det! Jeg har lagt til ${spokenList(speakList)} skal det være noe mer?")
+            responseBuilder.add(ResponseGenerator.addPizza(result))
         } else {
             responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?")
         }
@@ -136,7 +131,7 @@ class DialogflowCommunicator : DialogflowApp() {
 
         try {
             val change = handler.changePizza(explicitPizza, emptySet(), ingredientsToRemove.toSet())
-            responseBuilder.add("Nå har du ${spokenList(change.pizzas.map { it.name })} uten ${spokenList(ingredientsToRemove)}.")
+            responseBuilder.add(ResponseGenerator.pizzaChange(change))
         } catch (e: AmbiguityException) {
             responseBuilder.add("Unnskyld, hvilken pizza var det du ville endre?")
         }
@@ -159,7 +154,7 @@ class DialogflowCommunicator : DialogflowApp() {
 
         try {
             val change = handler.changePizza(explicitPizza, ingredientsToAdd.toSet(), emptySet())
-            responseBuilder.add("Greit, legger til ${spokenList(ingredientsToAdd)} på ${spokenList(change.pizzas.map { it.name })}.")
+            responseBuilder.add(ResponseGenerator.pizzaChange(change))
         } catch (e: AmbiguityException) {
             responseBuilder.add("Beklager, jeg er ikke sikker på hvilken pizza du vil legge til ${spokenList(ingredientsToAdd)} på.")
         }
@@ -252,15 +247,36 @@ class DialogflowCommunicator : DialogflowApp() {
                         for (j in 0 until amount[i]) {
                             removedPizzas.add(pizza)
                         }
-                        responseBuilder.add("Fjernet " + amount[i] +" "+ pizza.describeChangesToUser())
+                        responseBuilder.add("Fjernet " + amount[i] + " " + pizza.describeChangesToUser())
                     }
                 }
             }
-        }
-        else {
+        } else {
             responseBuilder.add("Du har ingen pizzaer å fjerne")
         }
         handler.removePizza(removedPizzas)
+        sessionManager[request] = handler
+        return responseBuilder.build()
+    }
+
+    @ForIntent("Pizza")
+    fun pizza(request: ActionRequest): ActionResponse {
+        val responseBuilder = getResponseBuilder(request)
+        val handler = sessionManager[request]
+
+        val type = (request.getParameter("Type") as String).toFloat().toInt()
+        val pizza: Pizza = pizzaMenu.getPizza(type)
+                ?: handler.history.findCurrentEntity()
+                ?: return fallback(request)
+
+        val text = when (val result = handler.pizzaName(pizza)) {
+            is ChangePizza -> ResponseGenerator.pizzaChange(result)
+            is AddPizza -> ResponseGenerator.addPizza(result)
+            is RemovePizza -> ResponseGenerator.removePizza(result)
+            else -> "Sorry, vet ikke hva jeg skal gjøre med $result"
+        }
+        responseBuilder.add(text)
+
         sessionManager[request] = handler
         return responseBuilder.build()
     }
@@ -271,12 +287,11 @@ class DialogflowCommunicator : DialogflowApp() {
         val responseBuilder = getResponseBuilder(request)
         val handler = sessionManager[request]
 
-        val question = handler.garbageInput()
-        val prompt = when {
-            question is FirstPizzaQuestion -> "Hvis du vet hva du vil ha, er det bare å si navnet på pizzaen. Hvis du ikke vet helt hvilken pizza du vil ha, bare si noe fyll du liker, så finner vi en god pizza. Hva har du lyst på?"
-            question is AnythingMoreQuestion -> "Vil du ha noen flere pizzaer?"
-            question is DeliverOrPickupQuestion -> "Hvis det var alt, vil du ha pizzaen levert på døra, eller hente den selv?"
-            question is PlaceOrderQuestion -> "Nå er hele bestillingen klar. Vil du sende den inn til pizzabakeren?"
+        val prompt = when (handler.garbageInput()) {
+            is FirstPizzaQuestion -> "Hvis du vet hva du vil ha, er det bare å si navnet på pizzaen. Hvis du ikke vet helt hvilken pizza du vil ha, bare si noe fyll du liker, så finner vi en god pizza. Hva har du lyst på?"
+            is AnythingMoreQuestion -> ResponseGenerator.anythingMore()
+            is DeliverOrPickupQuestion -> "Hvis det var alt, vil du ha pizzaen levert på døra, eller hente den selv?"
+            is PlaceOrderQuestion -> "Nå er hele bestillingen klar. Vil du sende den inn til pizzabakeren?"
             else -> getFallbackResponse()
         }
         responseBuilder.add(prompt)
