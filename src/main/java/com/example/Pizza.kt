@@ -35,6 +35,7 @@ data class PizzaMenu(val pizzaList: List<Pizza>) {
     fun getPizza(nr: Int) = pizzaList.find { it.nr == nr }
 
     fun getPizza(name: String) = pizzaList.find { it.name == name }
+            ?: name.toIntOrNull()?.let { getPizza(it) }
 }
 
 val json = File(Pizza::javaClass.javaClass.getResource("../../pizza_overview.json").file)

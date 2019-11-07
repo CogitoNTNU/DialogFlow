@@ -76,7 +76,7 @@ class DialogflowCommunicator : DialogflowApp() {
         return responseBuilder.build()
     }
 
-    @ForIntent("List bestilling") // TODO
+    @ForIntent("List bestilling")
     fun listOrder(request: ActionRequest): ActionResponse {
         val responseBuilder = getResponseBuilder(request)
         val handler = sessionManager[request]
@@ -97,9 +97,11 @@ class DialogflowCommunicator : DialogflowApp() {
         return responseBuilder.build()
     }
 
-    @ForIntent("Pizza ingredient listing") // TODO
+    @ForIntent("Pizza ingredient listing")
     fun listIngredients(request: ActionRequest): ActionResponse {
         val responseBuilder = getResponseBuilder(request)
+        val handler = sessionManager[request]
+
         val type = request.getParameter("Type").let {
             when (it) {
                 is String -> it.toInt()
@@ -109,13 +111,14 @@ class DialogflowCommunicator : DialogflowApp() {
                 else -> -1
             }
         }
-        val pizza = pizzaMenu.getPizza(type)
+        val pizza: Pizza? = pizzaMenu.getPizza(type) ?: handler.history.findCurrentEntity()
         if (pizza != null) {
             responseBuilder.add("På ${pizza.name} er det ${spokenList(pizza.ingredients)}")
             sessionManager[request].logPizzaInfo(pizza)
         } else {
             responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hva vil du ha på pizzaen din?")
         }
+        sessionManager[request] = handler
         return responseBuilder.build()
     }
 
@@ -126,7 +129,7 @@ class DialogflowCommunicator : DialogflowApp() {
 
         val handler = sessionManager[request]
 
-        val ingredientsToRemove = request.getParameter("rm_i") as List<String>
+        val ingredientsToRemove = request.getParameter("Ingredients") as List<String>
         val explicitPizza = (request.getParameter("pizza") as String?)?.let { pizzaMenu.getPizza(it) }
 
         try {
@@ -149,8 +152,11 @@ class DialogflowCommunicator : DialogflowApp() {
 
         val handler = sessionManager[request]
 
-        val ingredientsToAdd = request.getParameter("add_i") as List<String>
+        val ingredientsToAdd = request.getParameter("Ingredients") as List<String>
         val explicitPizza = (request.getParameter("pizza") as String?)?.let { pizzaMenu.getPizza(it) }
+
+        // If no pizzas are ordered yet, redirect to pizza finder
+        if (handler.order.pizzas.isEmpty()) return findPizza(request)
 
         try {
             val change = handler.changePizza(explicitPizza, ingredientsToAdd.toSet(), emptySet())
@@ -171,7 +177,7 @@ class DialogflowCommunicator : DialogflowApp() {
         val rb = ResourceBundle.getBundle("resources")
         val user = request.user
         val handler = sessionManager[request]
-        val requestedIngredients = request.getParameter("Ingredient") as List<String>
+        val requestedIngredients = request.getParameter("Ingredients") as List<String>
 
         val pizzaList = handler.findPizza(requestedIngredients, pizzaMenu)
 
@@ -180,7 +186,6 @@ class DialogflowCommunicator : DialogflowApp() {
         } else {
             "Beklager, vi har ingen pizzaer med dette på. Vil du ha noe annet?"
         })
-        pizzaList.forEach(handler::logPizzaInfo)
 
         LOGGER.info("Finn pizza slutt")
 
