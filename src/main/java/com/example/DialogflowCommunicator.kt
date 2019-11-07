@@ -200,12 +200,12 @@ class DialogflowCommunicator : DialogflowApp() {
 
         val handler = sessionManager[request]
         val delivery = request.getParameter("Deliver") as String == "deliver"
-        val address = request.getParameter("Address") as String
+        val address = request.getParameter("Address") as String?
 
-        handler.setDeliveryAddress(delivery, address)
+        handler.setDeliveryAddress(delivery)
 
         if (handler.order.delivery) {
-            responseBuilder.add("Pizzaen vil bli levert til ${handler.order.address}")
+            responseBuilder.add("Pizzaen vil bli levert")// til ${handler.order.address}")
         } else {
             responseBuilder.add("Pizzan kan hentes hos oss")
         }

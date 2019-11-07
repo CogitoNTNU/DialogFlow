@@ -11,9 +11,8 @@ class ActionHandler {
         return history.add(AddPizza(pizzas))
     }
 
-    fun setDeliveryAddress(deliver: Boolean, address: String): Boolean = if (deliver) {
+    fun setDeliveryAddress(deliver: Boolean): Boolean = if (deliver) {
         order.delivery = true
-        order.addAddress(address)
         true
     } else {
         order.delivery = false
