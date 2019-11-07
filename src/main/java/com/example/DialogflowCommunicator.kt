@@ -197,9 +197,9 @@ class DialogflowCommunicator : DialogflowApp() {
         val delivery = request.getParameter("Deliver") as String == "deliver"
         val address = request.getParameter("Address") as String?
 
-        handler.setDeliveryAddress(delivery)
+        handler.setDeliveryAddress(delivery, address)
 
-        if (handler.order.delivery) {
+        if (handler.order.delivery == true) {
             responseBuilder.add("Pizzaen vil bli levert")// til ${handler.order.address}")
         } else {
             responseBuilder.add("Pizzan kan hentes hos oss")
@@ -291,6 +291,7 @@ class DialogflowCommunicator : DialogflowApp() {
             is FirstPizzaQuestion -> "Hvis du vet hva du vil ha, er det bare å si navnet på pizzaen. Hvis du ikke vet helt hvilken pizza du vil ha, bare si noe fyll du liker, så finner vi en god pizza. Hva har du lyst på?"
             is AnythingMoreQuestion -> ResponseGenerator.anythingMore()
             is DeliverOrPickupQuestion -> "Hvis det var alt, vil du ha pizzaen levert på døra, eller hente den selv?"
+            is AddressQuestion -> "Hvor vil du ha pizzaen levert?"
             is PlaceOrderQuestion -> "Nå er hele bestillingen klar. Vil du sende den inn til pizzabakeren?"
             else -> getFallbackResponse()
         }

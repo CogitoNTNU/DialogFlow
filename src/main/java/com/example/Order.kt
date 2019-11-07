@@ -10,7 +10,7 @@ data class Order(var pizzas: MutableList<Pizza> = mutableListOf(),
                  var extras: MutableList<Extra> = mutableListOf(),
                  var name: String = "",
                  var phone: String = "",
-                 var delivery: Boolean = false,
+                 var delivery: Boolean? = null,
                  var address: String = "",
                  val time: String = LocalDateTime.now().toString()
 ) {

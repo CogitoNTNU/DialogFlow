@@ -28,5 +28,6 @@ class WhichPizzaToRemoveQuestion : ClarificationQuestion
 class AnythingMoreQuestion : Question
 data class WhichPizzaToChangeQuestion(val changePizza: ChangePizza) : ClarificationQuestion
 class DeliverOrPickupQuestion : Question
+class AddressQuestion : Question
 class PlaceOrderQuestion : Question
 class FirstPizzaQuestion : Question

@@ -62,7 +62,9 @@ class ActionsServlet : HttpServlet() {
         response.contentType = "application/json"
         response
                 .writer
-                .println(Klaxon().toJsonString(allSessions.mapValues { it.value.order to it.value.history }))
+                .println(Klaxon().toJsonString(allSessions.mapValues {
+                    it.value.order to it.value.history.stack.map(Any::toString)
+                }))
     }
 
     private fun writeResponse(res: HttpServletResponse, asJson: String) {

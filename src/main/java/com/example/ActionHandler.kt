@@ -11,8 +11,9 @@ class ActionHandler {
         return history.add(AddPizza(pizzas))
     }
 
-    fun setDeliveryAddress(deliver: Boolean): Boolean = if (deliver) {
+    fun setDeliveryAddress(deliver: Boolean, address: String?): Boolean = if (deliver) {
         order.delivery = true
+        order.address = address ?: order.address // Only update to new address if set
         true
     } else {
         order.delivery = false
@@ -78,7 +79,8 @@ class ActionHandler {
         if (latest is Question) return null
         // If the user has given us delivery info, ask if we should enter the order
         if (order.pizzas.isEmpty()) return FirstPizzaQuestion()
-        if (order.address.isBlank()) return DeliverOrPickupQuestion()
+        if (order.delivery == null) return DeliverOrPickupQuestion()
+        if (order.delivery == true && order.address.isBlank()) return AddressQuestion()
         return PlaceOrderQuestion()
     }
 
