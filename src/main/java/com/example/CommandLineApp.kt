@@ -39,7 +39,7 @@ fun main() {
                 "d", "delivery" -> {
                     println("Change delivery")
                     var prev = handler.order.delivery
-                    handler.setDeliveryAddress( !handler.order.delivery, " " )
+                    handler.setDeliveryAddress( !handler.order.delivery)
                     println("$prev -> ${handler.order.delivery}")
                 }
                 else -> println(handler.garbageInput() ?: "Ingenting")
