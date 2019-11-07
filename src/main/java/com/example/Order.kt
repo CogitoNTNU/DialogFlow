@@ -40,8 +40,6 @@ data class Order(var pizzas: MutableList<Pizza> = mutableListOf(),
 
     fun removeExtras(itemName: String) = extras.removeIf { it.name == itemName }
 
-    fun deliver(status: Boolean) {delivery = status}
-
     fun addAddress(address_: String) {address = address_}
 
     fun toJson(): String = Klaxon().toJsonString(this)

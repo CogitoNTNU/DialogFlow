@@ -12,11 +12,11 @@ class ActionHandler {
     }
 
     fun setDeliveryAddress(deliver: Boolean, address: String): Boolean = if (deliver) {
-        order.deliver(true)
+        order.delivery = true
         order.addAddress(address)
         true
     } else {
-        order.deliver(false)
+        order.delivery = false
         false
     }
 
