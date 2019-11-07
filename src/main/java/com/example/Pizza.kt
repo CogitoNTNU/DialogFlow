@@ -7,7 +7,7 @@ import java.io.File
 data class Pizza(
         val nr: Int,
         val name: String,
-        val originalIngredients: Set<String>,
+        private val originalIngredients: Set<String>,
         val price: List<Int>,
         private var additions: Set<String> = emptySet(),
         private var removals: Set<String> = emptySet()

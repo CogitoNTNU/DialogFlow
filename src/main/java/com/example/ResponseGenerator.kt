@@ -27,7 +27,7 @@ object ResponseGenerator {
             outString += if (change.removals.isNotEmpty()) "og " else "på "
         }
         if (change.removals.isNotEmpty()) {
-            outString += "fjerner ${spokenList(change.additions)} fra "
+            outString += "fjerner ${spokenList(change.removals)} fra "
         }
         outString += "${spokenList(change.pizzas.map { it.name })}."
         return outString
