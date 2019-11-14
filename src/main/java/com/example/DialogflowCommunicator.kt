@@ -22,6 +22,7 @@ import com.google.actions.api.DialogflowApp
 import com.google.actions.api.ForIntent
 import org.slf4j.LoggerFactory
 import java.util.*
+import java.util.Collections.singletonList
 
 /**
  * Implements all intent handlers for this Action. Note that your App must extend from DialogflowApp
@@ -117,6 +118,23 @@ class DialogflowCommunicator : DialogflowApp() {
             sessionManager[request].logPizzaInfo(pizza)
         } else {
             responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hva vil du ha på pizzaen din?")
+        }
+        sessionManager[request] = handler
+        return responseBuilder.build()
+    }
+
+    @ForIntent("Pizza ingredient listing - yes")
+    fun listIngredientsYes(request: ActionRequest): ActionResponse {
+        val responseBuilder = getResponseBuilder(request)
+        val handler = sessionManager[request]
+
+        val pizza = handler.history.findCurrentEntity<Pizza>()
+        if (pizza != null) {
+            val result = handler.addPizza(singletonList(pizza))
+            val response = ResponseGenerator.addPizza(result)
+            responseBuilder.add(response)
+        } else {
+            responseBuilder.add("Sorry, nå skjønte jeg ikke helt. Hva vil du ha?")
         }
         sessionManager[request] = handler
         return responseBuilder.build()
