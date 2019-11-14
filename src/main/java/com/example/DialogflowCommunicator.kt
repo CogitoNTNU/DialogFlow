@@ -136,7 +136,7 @@ class DialogflowCommunicator : DialogflowApp() {
             val change = handler.changePizza(explicitPizza, emptySet(), ingredientsToRemove.toSet())
             responseBuilder.add(ResponseGenerator.pizzaChange(change))
         } catch (e: AmbiguityException) {
-            responseBuilder.add("Unnskyld, hvilken pizza var det du ville endre?")
+            responseBuilder.add("Unnskyld, hvilken pizza var det du ville ha uten ${spokenList(ingredientsToRemove)}?")
         }
 
         LOGGER.info("Fjern ingredients slutt")
