@@ -39,7 +39,8 @@ class DialogflowCommunicator : DialogflowApp() {
         val user = request.user
         val handler = sessionManager[request]
 
-        var types = (request.getParameter("Type") as List<String>).mapNotNull { it.toFloatOrNull()?.toInt() }
+        val typeStringList = request.getParameter("Type") as List<String>
+        var types = typeStringList.mapNotNull { it.toFloatOrNull()?.toInt() }
         var amount = (request.getParameter("Amount") as List<Any>?)
                 ?.map { if (it is Int) it else it.toString().toFloat().toInt() }
                 ?: emptyList()
@@ -63,10 +64,13 @@ class DialogflowCommunicator : DialogflowApp() {
         val result = handler.addPizza(pizzas)
 
 
-        if (result.pizzas.isNotEmpty()) {
-            responseBuilder.add(ResponseGenerator.addPizza(result))
-        } else {
-            responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?")
+        when {
+            result.pizzas.isNotEmpty() -> responseBuilder.add(ResponseGenerator.addPizza(result))
+            typeStringList.singleOrNull() == "pizza" -> {
+                LOGGER.warn("Generic \"pizza\" detected from dialogflow, redirecting to fallback")
+                return fallback(request)
+            }
+            else -> responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hvilke ingredienser vil du ha på pizzaen din?")
         }
 
         LOGGER.info(responseBuilder.toString())

@@ -92,6 +92,7 @@ class ActionHandler {
             }
             is AnythingMoreQuestion, is FirstPizzaQuestion -> addPizza(singletonList(pizza))
             is WhichPizzaToRemoveQuestion -> removePizza(singletonList(pizza))
+            // TODO: Pizza ingredient listing is a unclassified pizza mention
             else -> null
         }
     }
