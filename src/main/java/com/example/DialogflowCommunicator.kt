@@ -118,8 +118,8 @@ class DialogflowCommunicator : DialogflowApp() {
         }
         val pizza: Pizza? = pizzaMenu.getPizza(type) ?: handler.history.findCurrentEntity()
         if (pizza != null) {
-            sessionManager[request].logIngredientListing(pizza)
-            responseBuilder.add("På ${pizza.name} er det ${spokenList(pizza.ingredients)}. Vil du ha den?")
+            responseBuilder.add("På ${pizza.name} er det ${spokenList(pizza.ingredients)}")
+            sessionManager[request].logPizzaInfo(pizza)
         } else {
             responseBuilder.add("Den pizzaen har jeg ikke hørt om. Hva vil du ha på pizzaen din?")
         }

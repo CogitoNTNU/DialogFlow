@@ -69,8 +69,8 @@ class ActionHandler {
     private fun askWhichPizzaToChange(additions: Set<String>, removals: Set<String>) =
             history.add(WhichPizzaToChangeQuestion(ChangePizza(emptyList(), additions, removals)))
 
-    fun logIngredientListing(pizza: Pizza) {
-        history.add(ConfirmAddPizzaQuestion(pizza))
+    fun logPizzaInfo(pizza: Pizza) {
+        history.add(UnclassifiedPizzaMention(pizza))
     }
 
     fun garbageInput(): Question? {
@@ -92,7 +92,7 @@ class ActionHandler {
             }
             is AnythingMoreQuestion, is FirstPizzaQuestion -> addPizza(singletonList(pizza))
             is WhichPizzaToRemoveQuestion -> removePizza(singletonList(pizza))
-            is ConfirmAddPizzaQuestion -> addPizza(singletonList(question.pizza))
+            // TODO: Pizza ingredient listing is a unclassified pizza mention
             else -> null
         }
     }
