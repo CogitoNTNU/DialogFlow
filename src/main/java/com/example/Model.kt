@@ -24,6 +24,7 @@ data class ChangePizza(
 
 interface Question
 interface ClarificationQuestion : Question
+data class ConfirmAddPizzaQuestion(val pizza: Pizza) : Question
 class WhichPizzaToRemoveQuestion : ClarificationQuestion
 class AnythingMoreQuestion : Question
 data class WhichPizzaToChangeQuestion(val changePizza: ChangePizza) : ClarificationQuestion
